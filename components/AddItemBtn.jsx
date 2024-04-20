@@ -1,16 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import { TouchableOpacity, View, StyleSheet, Image, Text } from "react-native";
 import LogoTest from "../assets/plus.png";
-import EmployeeModal from "./EmployeeModal";
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 
 const AddItemBtn = () => {
-  const DataBtns = [
-    { title:"Ajouter Employe", description: "Nouveau Employé", onPress: () => { setIsEmployeeModalVisible(true) } },
-    { title:"Ajouter Depense", description: "Nouveau Depense", onPress: () => console.log("Nouveau Depense") },
-    { title:"Ajouter Revenu",description: "Nouveau Revenu", onPress: () => console.log("Nouveau Revenu") }
-  ];
+  const navigation = useNavigation(); // Access the navigation object
 
-  const [isEmployeModalVisible, setIsEmployeeModalVisible] = useState(false);
+  const DataBtns = [
+    { title:"Depense", description: "Nouveau Depense", onPress: () => console.log("Nouveau Depense") },
+    { title:"Revenu",description: "Nouveau Revenu", onPress: () => console.log("Nouveau Revenu") },
+    { title:"Dépense pour Employe", description: "Nouveau Depense", onPress: () => navigation.navigate('Employé') }, // Navigate to EmployeScreen
+  ];
 
   const renderButtons = () => {
     return DataBtns.map((btnData, index) => (
@@ -25,11 +25,9 @@ const AddItemBtn = () => {
     ));
   };
 
-
   return (
     <View style={styles.container}>
       {renderButtons()}
-      <EmployeeModal visible={isEmployeModalVisible} onClose={()=> {setIsEmployeeModalVisible(false)}}/>
     </View>
   );
 };
@@ -39,7 +37,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 10,
+    height:"100%",
     backgroundColor: "#fff",
   },
   itemContainer: {
@@ -62,7 +60,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#000",
     padding:15,
-    
   },
   line: {
     flex: 1,
@@ -79,9 +76,8 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "normal",
     color: "#000",
-    marginVertical: 10,
   }
 });
 

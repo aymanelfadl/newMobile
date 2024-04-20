@@ -1,3 +1,4 @@
+import { View, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
@@ -11,6 +12,7 @@ const Tab = createBottomTabNavigator();
 
 
 const App = () => {
+
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -54,7 +56,17 @@ const App = () => {
           options={{
             tabBarIcon: ({color, size}) => (
               <Icon name="credit-card" size={size} color={color} />
-            )
+            ),
+            headerRight: () => (
+              <View style={{ flexDirection: 'row', marginRight: 10 }}>
+                <TouchableOpacity onPress={()=>{handleAddDepenses()}}>
+                  <Icon name="account-plus" size={24} color="black" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleSearchDepenses}>
+                  <Icon name="account-search-outline" size={24} color="black" style={{ marginRight: 10 }} />
+                </TouchableOpacity>
+              </View>
+            ),
           }}
         />
         <Tab.Screen 
@@ -63,18 +75,38 @@ const App = () => {
           options={{
             tabBarIcon: ({color, size}) => (
               <Icon name="currency-usd" size={size} color={color} />
-            )
+            ),
+            headerRight: () => (
+              <View style={{ flexDirection: 'row', marginRight: 10 }}>
+                <TouchableOpacity onPress={handleAddRevenu}>
+                  <Icon name="account-plus" size={24} color="black" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleSearchRevenu}>
+                  <Icon name="account-search-outline" size={24} color="black" style={{ marginRight: 10 }} />
+                </TouchableOpacity>
+              </View>
+            ),
           }}
         />
           <Tab.Screen
-            name="Employé"
-            component={EmployeScreen}
-            options={{
-              tabBarIcon: ({color, size}) => (
-                <Icon name="account" size={size} color={color} />
-              )
-            }}
-          />
+              name="Employé"
+              component={EmployeScreen}
+              options={{
+                tabBarIcon: ({color, size}) => (
+                  <Icon name="account" size={size} color={color} />
+                ),
+                headerRight: () => (
+                  <View style={{ flexDirection: 'row', marginRight: 10 }}>
+                    <TouchableOpacity onPress={handleAddEmploye}>
+                      <Icon name="account-plus" size={24} color="black" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleSearchEmploye}>
+                      <Icon name="account-search-outline" size={24} color="black" style={{ marginRight: 10 }} />
+                    </TouchableOpacity>
+                  </View>
+                ),
+              }}
+            />
         <Tab.Screen 
           name="Analyse"
           component={AnalyseScreen}

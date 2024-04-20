@@ -1,10 +1,11 @@
 import { View , Text } from "react-native";
+import AddItemBtn from "../components/AddItemBtn";
 
 const HomeScreen = () =>{
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{color:"black"}}>Home!</Text>
+        <View>
+          <AddItemBtn />
         </View>
       );
 }
