@@ -36,6 +36,7 @@ const Header = ({ title, onSearching }) => {
 
 const styles = StyleSheet.create({
   container: {
+    zIndex:1000,
     backgroundColor: 'white',
     shadowColor: '#000',
     shadowOffset: {

@@ -58,8 +58,7 @@ const AddSpendModal = ({ visible, employee, onClose }) => {
             const spendsToAdd = parseFloat(spends) ;
             let totalSpends ;  
 
-            const currentDate = new Date();
-            const formattedDate = formatDate(currentDate);
+            const formattedDate = formatDate(selectedDate);
 
             setUploadProgress(0.5);
             isNaN(spendsToAdd) ? totalSpends = currentSpends : totalSpends = spendsToAdd + currentSpends ; 
@@ -71,12 +70,14 @@ const AddSpendModal = ({ visible, employee, onClose }) => {
     
             const logData = {
                 employeeId: employee.id,
+                type:"Update",
                 operation: "Les dépenses de l'employé " + employee.description + " ont été mises à jour",
                 timestamp: new Date(),
             };
             await firestore().collection('changeLogs').add(logData);
             setUploadProgress(1);
             setSpends("");
+            setSelectedDate(new Date());
             setIsUploading(false);
         } catch (error) {
             console.error('Error updating spends:', error);
@@ -115,11 +116,14 @@ const AddSpendModal = ({ visible, employee, onClose }) => {
                         <View style={styles.modalContent}>
                             <View style={styles.modalHeader}>
                                 <Text style={styles.title}>Dépenses</Text>
-                                <TouchableOpacity onPress={handleCalendarPress} style={{padding:6}} >
-                                    <Icon name="calendar-plus-o" color="black" size={30}></Icon>
+                                <TouchableOpacity onPress={handleCalendarPress} style={{padding:4, marginTop:10}} >
+                                    <Icon name="calendar-plus-o" color="crimson"  size={30}></Icon>
                                 </TouchableOpacity>
                             </View>
                             <DateModal />
+                            <View>
+                                <Text style={styles.textDate}>{formatDate(selectedDate)}</Text>
+                            </View>
                             <TextInput
                                 style={styles.input}
                                 placeholder="Entrer montant dépense"
@@ -132,7 +136,6 @@ const AddSpendModal = ({ visible, employee, onClose }) => {
                                     }
                                 }}
                             />
-                            <Text style={styles.textDate}>{formatDate(selectedDate)}</Text>
                             <TouchableOpacity style={[styles.btn, styles.AddspendBtn]} onPress={handleSpendAmount}>
                                 <Text style={styles.btnText}>Ajouter Dépenses</Text>
                             </TouchableOpacity>
@@ -197,6 +200,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'crimson',
         backgroundColor: "#FFF",
+        height:70,
         borderRadius: 15,
         color: "black",
         paddingHorizontal: 10,
@@ -204,9 +208,10 @@ const styles = StyleSheet.create({
       },
     textDate:{
         fontSize: 20,
-        fontWeight: 'bold',
+        fontWeight: '400',
         textAlign: "center",
-        color: "rgb(38 38 38)"
+        color: "rgb(38 38 38)",
+        marginBottom:30,
     },
     btn: {
         backgroundColor: "#262626",

@@ -17,19 +17,8 @@ const EmployeScreen = () => {
 
     const [itemsData,setItemsData] = useState(null); 
  
-    useEffect(()=>{
-      fetchEmployeesFromFirestore()
-        .then(employees => { 
-          setItemsData(employees);
-        })
-        .catch(error => { console.error("Error fetching employees:", error); });
-    },[showDelete , isModalEmployeOpen , isModalSpoendsOpen])
-
-
-    const fetchEmployeesFromFirestore = async () => {
-      try {
-        const querySnapshot = await firestore().collection('EmployesCollection').get();
-    
+    useEffect(() => {
+      const unsubscribe = firestore().collection('EmployesCollection').onSnapshot(querySnapshot => {
         const employees = querySnapshot.docs.map(doc => {
           const data = doc.data();
           return {
@@ -43,13 +32,12 @@ const EmployeScreen = () => {
         });
     
         employees.sort((a, b) => b.timestamp - a.timestamp);
+        setItemsData(employees);
+      });
     
-        return employees;
-      } catch (error) {
-        console.error("Error fetching employees:", error);
-        return [];
-      }
-    };
+      // Return a cleanup function to unsubscribe from the listener when the component unmounts
+      return () => unsubscribe();
+    }, []);
     
     
     const handleDelete = async (item) => {
@@ -73,11 +61,14 @@ const EmployeScreen = () => {
         if (!itemsData) {
           return []; 
         }
-        
+      
         return itemsData.filter(item =>
-          item.description.toLowerCase().includes(searchQuery.toLowerCase())
+          item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.spends.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.dateAdded.toLowerCase().includes(searchQuery.toLowerCase())
         );
       };
+      
       
       
       const openDelete = () => {
@@ -119,14 +110,14 @@ const EmployeScreen = () => {
                 numColumns={2}
                 columnWrapperStyle={styles.columnWrapper}
                 ListEmptyComponent={<Text style={{color:"black", justifyContent:"center" , alignSelf:"center", color:"gray"}}>Aucun employé trouvé</Text>}
-                /> 
+            /> 
             <TouchableOpacity style={styles.button} onPress={()=>{setIsModalEmployeOpen(true)}}>
-              <Text style={styles.buttonText}><Icon name="plus" size={40} color="white" /></Text>
+                <Text style={styles.buttonText}><Icon name="plus" size={40} color="white" /></Text>
             </TouchableOpacity>
-              <AddSpendModal visible={isModalSpoendsOpen} employee={selectedEmploye} onClose={() => setIsModalSpoendsOpen(false)} />
-              <EmployeeModal  visible={isModalEmployeOpen} onClose={()=>{setIsModalEmployeOpen(false)}}/>
-          </View>
-        </TouchableNativeFeedback>
+            <AddSpendModal visible={isModalSpoendsOpen} employee={selectedEmploye} onClose={() => setIsModalSpoendsOpen(false)} />
+            <EmployeeModal  visible={isModalEmployeOpen} onClose={()=>{setIsModalEmployeOpen(false)}}/>
+        </View>
+      </TouchableNativeFeedback>
     );
 };
 
