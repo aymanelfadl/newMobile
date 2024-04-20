@@ -4,6 +4,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AddSpendModal from "../components/AddSpendModal";
 import EmployeeModal from "../components/EmployeeModal";
 import Header from "../components/Header";
+import EmployeLogo from "../assets/employes.png"
 
 
 const EmployeScreen = () => {
@@ -11,25 +12,26 @@ const EmployeScreen = () => {
     const [selectedEmploye, setSelectedEmploye] = useState(null);
     const [isModalSpoendsOpen, setIsModalSpoendsOpen] = useState(false);
     const [isModalEmployeOpen, setIsModalEmployeOpen ] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const itemsData = [
         {
           id: 1,
-          thumbnail: require("../assets/download.jpeg"),
+          thumbnail: EmployeLogo,
           description: 'Item 1 description',
           spends: '10',
           dateAdded: '2024-04-19',
         },
         {
           id: 2,
-          thumbnail: require("../assets/download.jpeg"),
+          thumbnail: EmployeLogo,
           description: 'Item 2 description',
           spends: '20',
           dateAdded: '2024-04-20',
         },
         {
           id: 3,
-          thumbnail: require("../assets/download.jpeg"),
+          thumbnail: EmployeLogo,
           description: 'Item 3 description',
           spends: '30',
           dateAdded: '2024-04-21',
@@ -65,17 +67,25 @@ const EmployeScreen = () => {
         </TouchableOpacity>
     );
 
+    const handleSearch = (query) =>{
+        setSearchQuery(query);
+    }
+
+    const filteredItems = itemsData.filter(item =>
+      item.description.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <View style={styles.container}>
-            <Header title={"Employe"} />
+            <Header title={"Employes"} onSearching={handleSearch} />
             <FlatList
-                data={itemsData}
+                data={filteredItems}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id.toString()}
                 numColumns={2}
                 columnWrapperStyle={styles.columnWrapper}
             />
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={()=>{setIsModalEmployeOpen(true)}}>
               <Text style={styles.buttonText}><Icon name="plus" size={40} color="white" /></Text>
             </TouchableOpacity>
             <AddSpendModal visible={isModalSpoendsOpen} employee={selectedEmploye} onClose={() => setIsModalSpoendsOpen(false)} />
@@ -93,14 +103,22 @@ const styles = StyleSheet.create({
     },
     itemContainer: {
       flex: 1,
-      margin: 5,
+      margin: 8,
       borderRadius: 30,
-      borderWidth: 1,
       borderColor: '#ccc',
       alignItems: 'center',
       justifyContent: 'center',
       padding: 10,
-      backgroundColor: '#ffff',
+      backgroundColor: 'white',
+      shadowColor: 'gray',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.5,
+      shadowRadius: 4,
+      elevation: 6,
+      marginBottom: 10,
     },
     deleteIconContainer: {
       position: 'absolute',

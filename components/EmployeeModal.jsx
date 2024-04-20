@@ -59,7 +59,7 @@ const EmployeeModal = ({ visible, onClose }) => {
  
   return (
     <Modal
-      animationType="slide"
+      animationType="fade"
       transparent={true}
       visible={visible}
       onRequestClose={onClose}
@@ -102,26 +102,31 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: '#fff',
-    padding: 40,
-    borderRadius: 10,
-    elevation: 5,
-    width: '80%'
+    paddingHorizontal: 40,
+    paddingVertical: 30,
+    borderRadius: 30,
+    width: '80%',
+    shadowColor: 'crimson',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 1,
+    elevation: 3,
   },
   title: {
     fontSize: 25,
     fontWeight: 'bold',
-    marginBottom:16,
-    marginTop: -25,
-    marginLeft: -10 ,
-    textAlign: "left",
-    color: "#000"
+    textAlign: "center",
+    marginBottom:20,
+    color: "rgb(38 38 38)"
   },
   input: {
     borderWidth: 1,
-    borderColor: '#262626',
+    borderColor: 'crimson',
     backgroundColor: "#FFF",
     borderRadius: 15,
-    color: "#000",
+    color: "gray",
     paddingHorizontal: 10,
     marginBottom: 12,
   },
@@ -143,17 +148,16 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   closeButton: {
-    backgroundColor: "#ff0000",
+    backgroundColor: "crimson", 
     padding: 8,
     borderRadius: 100,
-    marginBottom: -10,
   },
   closeButtonText: {
     color: "#fff",
     textAlign: "center",
   },
   addEmployeeBtn: {
-    backgroundColor: "#0066cc", 
+    backgroundColor: "rgb(56 189 248)",
     padding:10,
     marginBottom: 15,
     marginTop:15
