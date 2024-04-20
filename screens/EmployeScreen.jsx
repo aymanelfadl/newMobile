@@ -1,14 +1,16 @@
-import React, { useState } from "react";
-import { View , Text, TouchableOpacity, StyleSheet, FlatList, Image } from "react-native";
+import React, { useState} from "react";
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AddSpendModal from "../components/AddSpendModal";
 import EmployeeModal from "../components/EmployeeModal";
+import Header from "../components/Header";
 
-const EmployeScreen = ({handleAddEmploye}) => {
+
+const EmployeScreen = () => {
     const [showDelete, setShowDelete] = useState(false);
     const [selectedEmploye, setSelectedEmploye] = useState(null);
     const [isModalSpoendsOpen, setIsModalSpoendsOpen] = useState(false);
-    const [isModalEmployeOpen, setIsModalEmployeOpen] = useState(false);
+    const [isModalEmployeOpen, setIsModalEmployeOpen ] = useState(false);
 
     const itemsData = [
         {
@@ -34,15 +36,11 @@ const EmployeScreen = ({handleAddEmploye}) => {
         },
     ];
 
-    
-    const handleAddEmploye = () =>{
-        setIsModalEmployeOpen(true)
-    }
-    const handleEmployePress = (item) =>{
-        
+    const handleEmployePress = (item) => {
         setIsModalSpoendsOpen(true);
         setSelectedEmploye(item);
     }
+
     const openDelete = () => {
         setShowDelete(true);
     };
@@ -59,22 +57,17 @@ const EmployeScreen = ({handleAddEmploye}) => {
         <TouchableOpacity style={styles.itemContainer} onPress={handleEmployePress} onLongPress={openDelete}>
           <TouchableOpacity style={showDelete ? styles.deleteIconContainer : styles.hideDeleteIconContainer} onPress={handleDelete}>
             <Icon name="delete-circle-outline" size={20} style={{ opacity: 1, color: "red" }} />
-          </TouchableOpacity>
-          <TouchableOpacity >  
-              <Image source={item.thumbnail} style={styles.thumbnail}  />
-          </TouchableOpacity>
+          </TouchableOpacity>  
+          <Image source={item.thumbnail} style={styles.thumbnail}  />
           <Text style={styles.description}>{item.description}</Text>
-          <Text style={styles.spends}>{item.spends} MAD</Text>
+          <Text style={styles.spends}><Text style={{fontWeight:"bold"}}>-</Text>{item.spends} MAD</Text>
           <Text style={styles.dateAdded}>{item.dateAdded}</Text>
         </TouchableOpacity>
     );
 
     return (
         <View style={styles.container}>
-            {/* <TouchableOpacity style={styles.addButton} onPress={() =>{setIsModalEmployeOpen(true)}}>
-                <Image source={require("../assets/plus.png")} style={styles.thumbnail} />
-                <Text style={styles.description}>Ajouter Employe</Text>
-            </TouchableOpacity> */}
+            <Header title={"Employe"} />
             <FlatList
                 data={itemsData}
                 renderItem={renderItem}
@@ -82,8 +75,11 @@ const EmployeScreen = ({handleAddEmploye}) => {
                 numColumns={2}
                 columnWrapperStyle={styles.columnWrapper}
             />
-            <AddSpendModal visible={isModalSpoendsOpen} employee={selectedEmploye} onClose={() => {setIsModalSpoendsOpen(false)}}/>
-            <EmployeeModal visible={isModalEmployeOpen} onClose={()=>{setIsModalEmployeOpen(false)}}/>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.buttonText}><Icon name="plus" size={40} color="white" /></Text>
+            </TouchableOpacity>
+            <AddSpendModal visible={isModalSpoendsOpen} employee={selectedEmploye} onClose={() => setIsModalSpoendsOpen(false)} />
+            <EmployeeModal  visible={isModalEmployeOpen} onClose={()=>{setIsModalEmployeOpen(false)}}/>
         </View>
     );
 };
@@ -92,7 +88,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       position: 'relative',
-      padding: 10,
+      margin:0,
       backgroundColor: 'rgb(249 250 251)',
     },
     itemContainer: {
@@ -147,7 +143,39 @@ const styles = StyleSheet.create({
     addButton: {
       alignItems: 'center',
       marginBottom: 20,
-    }
+    },
+    optionsContainer: {
+      position: 'absolute',
+      bottom: 90,
+      right: 21,
+    },
+    option: {
+      backgroundColor: '#262626',
+      paddingVertical: 10,
+      paddingHorizontal: 10,
+      borderRadius: 25,
+      marginVertical: 8
+    },
+    optionText: {
+      color: '#fff',
+      fontSize: 90,
+    },
+    button: {
+      position: 'absolute',
+      bottom: 30,
+      right: 20,
+      backgroundColor: 'crimson',
+      width: 60,
+      height: 60,
+      borderRadius: 25,
+      alignItems: 'center',
+      justifyContent: 'center',
+      elevation : 5
+    },
+    buttonText: {
+      color: '#fff',
+      fontSize: 50,
+    },
 });
 
 export default EmployeScreen;

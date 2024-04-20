@@ -36,6 +36,14 @@ const AddSpendModal = ({ visible, employee, onClose }) => {
         });
     };
 
+    const formatDate = (date) =>{
+        const currentDate = date;
+            const day = currentDate.getDate().toString().padStart(2, '0');
+            const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+            const year = currentDate.getFullYear().toString();
+            return `${day}/${month}/${year}`;
+    }
+
     const handleCalendarPress = () => {
         setIsDateModalOpen(!isDateModalOpen);
     }
@@ -51,15 +59,13 @@ const AddSpendModal = ({ visible, employee, onClose }) => {
             let totalSpends ; 
 
             const currentDate = new Date();
-            const day = currentDate.getDate().toString().padStart(2, '0');
-            const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-            const year = currentDate.getFullYear().toString();
-            const formattedDate = `${day}/${month}/${year}`;
+            const formattedDate = formatDate(currentDate);
+
             setUploadProgress(0.5);
             isNaN(spendsToAdd) ? totalSpends = currentSpends : totalSpends = spendsToAdd + currentSpends ; 
             await firestore().collection('itemsCollection').doc(employee.id).update({
                 spends: totalSpends,
-                dateAdded: formattedDate ,
+                dateAdded: formattedDate,
                 timestamp: new Date(),
             });
     
@@ -125,6 +131,11 @@ const AddSpendModal = ({ visible, employee, onClose }) => {
                                         setSpends(text);
                                     }
                                 }}
+                            />
+                            <TextInput
+                                style={styles.input}
+                                placeholderTextColor="black"
+                                value={formatDate(selectedDate)}
                             />
                             <TouchableOpacity style={[styles.btn, styles.AddspendBtn]} onPress={handleSpendAmount}>
                                 <Text style={styles.btnText}>Add Spends</Text>
