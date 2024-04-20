@@ -106,7 +106,7 @@ const AddSpendModal = ({ visible, employee, onClose }) => {
         <>
             {!isUploading &&
                 <Modal
-                    animationType="slide"
+                    animationType="fade"
                     transparent={true}
                     visible={visible}
                     onRequestClose={onClose}
@@ -114,15 +114,15 @@ const AddSpendModal = ({ visible, employee, onClose }) => {
                     <View style={styles.modalContainer}>
                         <View style={styles.modalContent}>
                             <View style={styles.modalHeader}>
-                                <Text style={styles.title}>Add Spends</Text>
-                                <TouchableOpacity onPress={handleCalendarPress} >
+                                <Text style={styles.title}>Dépenses</Text>
+                                <TouchableOpacity onPress={handleCalendarPress} style={{padding:6}} >
                                     <Icon name="calendar-plus-o" color="black" size={30}></Icon>
                                 </TouchableOpacity>
                             </View>
                             <DateModal />
                             <TextInput
                                 style={styles.input}
-                                placeholder="Enter spend amount"
+                                placeholder="Entrer montant dépense"
                                 placeholderTextColor="black"
                                 keyboardType="numeric"
                                 value={spends}
@@ -132,16 +132,12 @@ const AddSpendModal = ({ visible, employee, onClose }) => {
                                     }
                                 }}
                             />
-                            <TextInput
-                                style={styles.input}
-                                placeholderTextColor="black"
-                                value={formatDate(selectedDate)}
-                            />
+                            <Text style={styles.textDate}>{formatDate(selectedDate)}</Text>
                             <TouchableOpacity style={[styles.btn, styles.AddspendBtn]} onPress={handleSpendAmount}>
-                                <Text style={styles.btnText}>Add Spends</Text>
+                                <Text style={styles.btnText}>Ajouter Dépenses</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={[styles.btn, styles.closeButton]} onPress={onClose}>
-                                <Text style={styles.closeButtonText}>Close</Text>
+                                <Text style={styles.closeButtonText}>Fermer</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -172,25 +168,45 @@ const styles = StyleSheet.create({
     },    
     modalContent: {
         backgroundColor: '#fff',
-        padding: 40,
-        borderRadius: 10,
-        elevation: 5,
-        width: '80%'
-    },
-    title: {
+        paddingHorizontal: 40,
+        paddingVertical: 30,
+        borderRadius: 30,
+        width: '80%',
+        shadowColor: 'crimson',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 1,
+        elevation: 3,
+      },
+      title: {
         fontSize: 25,
-        color: "#000",
         fontWeight: 'bold',
-        textAlign: 'center',
-    },
+        textAlign: "center",
+        marginBottom:20,
+        color: "rgb(38 38 38)"
+      },
+      title: {
+        fontSize: 25,
+        fontWeight: 'bold',
+        textAlign: "center",
+        color: "rgb(38 38 38)"
+      },
     input: {
         borderWidth: 1,
-        borderColor: '#262626',
+        borderColor: 'crimson',
         backgroundColor: "#FFF",
         borderRadius: 15,
-        color: "#000",
+        color: "black",
         paddingHorizontal: 10,
         marginBottom: 12,
+      },
+    textDate:{
+        fontSize: 20,
+        fontWeight: 'bold',
+        textAlign: "center",
+        color: "rgb(38 38 38)"
     },
     btn: {
         backgroundColor: "#262626",
@@ -203,19 +219,19 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     closeButton: {
-        backgroundColor: "#ff0000",
+        backgroundColor: "crimson", 
         padding: 8,
         borderRadius: 100,
-        marginBottom: -10,
-    },
+      },
     closeButtonText: {
         color: "#fff",
         textAlign: "center",
     },
     AddspendBtn: {
-        backgroundColor: "#0066cc",
-        padding: 10,
+        backgroundColor: "rgb(14 165 233)",
+        padding:10,
         marginBottom: 15,
+        marginTop:15
     },
     uploadingContainer: {
         position: 'absolute',

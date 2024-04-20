@@ -77,7 +77,7 @@ const EmployeScreen = () => {
 
     return (
         <View style={styles.container}>
-            <Header title={"Employes"} onSearching={handleSearch} />
+            <Header title={"Employés"} onSearching={handleSearch} />
             <FlatList
                 data={filteredItems}
                 renderItem={renderItem}

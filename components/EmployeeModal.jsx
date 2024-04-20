@@ -66,10 +66,10 @@ const EmployeeModal = ({ visible, onClose }) => {
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text style={styles.title}>New Employee</Text>
+          <Text style={styles.title}>Nouvel Employé</Text>
           <TextInput
             style={styles.input}
-            placeholder="Name"
+            placeholder="Prenom"
             placeholderTextColor="black"
             value={name}
             onChangeText={setName}
@@ -77,15 +77,15 @@ const EmployeeModal = ({ visible, onClose }) => {
           <TextInput
             placeholderTextColor="black"
             style={styles.input}
-            placeholder="Last Name"
+            placeholder="Nom"
             value={lastName}
             onChangeText={setLastName}
           />
           <TouchableOpacity style={[styles.btn, styles.addEmployeeBtn]} onPress={handleAddEmployee}>
-            <Text style={styles.btnText}>Add Employee</Text>
+            <Text style={styles.btnText}>Ajouter Employé</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.btn, styles.closeButton]} onPress={onClose}>
-            <Text style={styles.closeButtonText}>Close</Text>
+            <Text style={styles.closeButtonText}>Fermer</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -126,16 +126,9 @@ const styles = StyleSheet.create({
     borderColor: 'crimson',
     backgroundColor: "#FFF",
     borderRadius: 15,
-    color: "gray",
+    color: "black",
     paddingHorizontal: 10,
     marginBottom: 12,
-  },
-  text: {
-    color: "black",
-    fontSize: 20,
-    fontWeight:"100",
-    marginLeft:10,
-    marginBottom:8
   },
   btn: {
     backgroundColor: "#262626",
@@ -157,7 +150,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   addEmployeeBtn: {
-    backgroundColor: "rgb(56 189 248)",
+    backgroundColor: "rgb(14 165 233)",
     padding:10,
     marginBottom: 15,
     marginTop:15

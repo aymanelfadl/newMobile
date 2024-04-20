@@ -15,7 +15,7 @@ const Header = ({ title, onSearching }) => {
           </TouchableOpacity>
           <TextInput
           style={styles.searchInput}
-          placeholder="Search..."
+          placeholder="Rechercher..."
           placeholderTextColor="gray"
           onChangeText={(text) => {
             onSearching(text); 
