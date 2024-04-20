@@ -1,57 +1,43 @@
 import React, { useState } from 'react';
-import { View, Modal, StyleSheet, Text, TextInput, Image, TouchableOpacity, PermissionsAndroid } from 'react-native';
+import { View, Modal, StyleSheet, Text, TextInput, TouchableOpacity, } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
 const EmployeeModal = ({ visible, onClose }) => {
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
-
-  const handleAddEmployee = async () => {
-    try {
-        // the default image 
-      const imageUrl = '';
-       // obj employee
-      const employeeData = {
-        name: name,
-        lastName: lastName,
-        avatar: imageUrl,
-      };
-
-        await uploadToFirebase(employeeData);
-    
-      onClose();
-    } catch (error) {
-      console.error('Error handling employee data:', error);
-    }
-  };
-
  
- const uploadToFirebase = async (employeeData) => {
+
+  const formatDate = (date) =>{
+    const currentDate = date;
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    const year = currentDate.getFullYear().toString();
+    return `${day}/${month}/${year}`;
+  }
+
+ const uploadToFirebase = async () => {
     try {
-      const currentDate = new Date();
-      const day = currentDate.getDate().toString().padStart(2, '0');
-      const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-      const year = currentDate.getFullYear().toString();
-
-      const formattedDate = `${day}/${month}/${year}`;
-
-      const employeeRef = await firestore().collection('itemsCollection').add({
-        type: 'employee',
-        thumbnail: employeeData.avatar, 
-        description: employeeData.name + ' ' + employeeData.lastName,
-        spends: 0,
-        dateAdded: formattedDate,
-        timestamp: currentDate,
-    });
-
-  
+        const currentDate = new Date();
+        const formattedDate = formatDate(currentDate);
+        const img = 'https://firebasestorage.googleapis.com/v0/b/expense-manager-376bc.appspot.com/o/employes.png?alt=media&token=c33d6436-242a-480e-bb58-d52ebeaa642a'
+        
+        const employeeRef = await firestore().collection('EmployesCollection').add({
+          thumbnail: img, 
+          description: name + ' ' + lastName,
+          spends: 0,
+          dateAdded: formattedDate,
+          timestamp: currentDate,
+      });
+      onClose();
+      
       await firestore().collection('changeLogs').add({
         timestamp: new Date(),
-        operation: 'A new employee, ' + employeeData.name + ' ' + employeeData.lastName + ' has been added',
+        operation: "Un nouveau employé, " + name + " " + lastName + ", a été ajouté.",
         itemId: employeeRef.id,
       });
       console.log("the employee has ben addeed ");
-      onClose();
+      setName("");
+      setLastName("");
     } catch (error) {
       console.error('Error uploading image:', error);
     }
@@ -81,7 +67,7 @@ const EmployeeModal = ({ visible, onClose }) => {
             value={lastName}
             onChangeText={setLastName}
           />
-          <TouchableOpacity style={[styles.btn, styles.addEmployeeBtn]} onPress={handleAddEmployee}>
+          <TouchableOpacity style={[styles.btn, styles.addEmployeeBtn]} onPress={uploadToFirebase}>
             <Text style={styles.btnText}>Ajouter Employé</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.btn, styles.closeButton]} onPress={onClose}>

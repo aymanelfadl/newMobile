@@ -25,7 +25,7 @@ const Header = ({ title, onSearching }) => {
       ) : (
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{title}</Text>
-          <TouchableOpacity onPress={()=>{setOpenSearch(true)}}>
+          <TouchableOpacity onPress={()=>{setOpenSearch(true)}} style={{paddingLeft:6}}>
             <Icon name="search" size={30} color="crimson" />
           </TouchableOpacity>
         </View>
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    marginLeft: 10,
+    marginLeft: 8,
     fontSize: 16,
     paddingVertical: 8,
     paddingHorizontal: 10,

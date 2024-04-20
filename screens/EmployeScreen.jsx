@@ -1,10 +1,11 @@
-import React, { useState} from "react";
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image } from "react-native";
+import React, { useEffect, useState} from "react";
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image,TouchableNativeFeedback } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AddSpendModal from "../components/AddSpendModal";
 import EmployeeModal from "../components/EmployeeModal";
 import Header from "../components/Header";
-import EmployeLogo from "../assets/employes.png"
+
+import firestore from '@react-native-firebase/firestore';
 
 
 const EmployeScreen = () => {
@@ -14,83 +15,119 @@ const EmployeScreen = () => {
     const [isModalEmployeOpen, setIsModalEmployeOpen ] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
 
-    const itemsData = [
-        {
-          id: 1,
-          thumbnail: EmployeLogo,
-          description: 'Item 1 description',
-          spends: '10',
-          dateAdded: '2024-04-19',
-        },
-        {
-          id: 2,
-          thumbnail: EmployeLogo,
-          description: 'Item 2 description',
-          spends: '20',
-          dateAdded: '2024-04-20',
-        },
-        {
-          id: 3,
-          thumbnail: EmployeLogo,
-          description: 'Item 3 description',
-          spends: '30',
-          dateAdded: '2024-04-21',
-        },
-    ];
+    const [itemsData,setItemsData] = useState(null); 
+ 
+    useEffect(()=>{
+      fetchEmployeesFromFirestore()
+        .then(employees => { 
+          setItemsData(employees);
+        })
+        .catch(error => { console.error("Error fetching employees:", error); });
 
-    const handleEmployePress = (item) => {
-        setIsModalSpoendsOpen(true);
-        setSelectedEmploye(item);
-    }
+    })
 
-    const openDelete = () => {
+
+    const fetchEmployeesFromFirestore = async () => {
+      try {
+        const querySnapshot = await firestore().collection('EmployesCollection').get();
+    
+        const employees = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            dateAdded: data.dateAdded,
+            description: data.description,
+            spends: data.spends,
+            thumbnail: data.thumbnail,
+            timestamp: data.timestamp.toDate(), 
+          };
+        });
+    
+        employees.sort((a, b) => b.timestamp - a.timestamp);
+    
+        return employees;
+      } catch (error) {
+        console.error("Error fetching employees:", error);
+        return [];
+      }
+    };
+    
+    
+    const handleDelete = async (item) => {
+      try {
+        const documentRef = firestore().collection('EmployesCollection').doc(item.id);
+    
+        await documentRef.delete();
+    
+        console.log("Item deleted successfully");
+      } catch (error) {
+        console.error("Error deleting item:", error);
+      }
+    };
+    
+  
+      const handleSearch = (query) =>{
+        setSearchQuery(query);
+      }
+      
+      const filteredItems = () => {
+        if (!itemsData) {
+          return []; 
+        }
+        
+        return itemsData.filter(item =>
+          item.description.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      };
+      
+      
+      const openDelete = () => {
         setShowDelete(true);
-    };
-
-    const handleDelete = () => {
-        // handle delete logic
-    };
-
-    const handleCloseOptions = () => {
+      };
+      
+      const handleCloseAll = () =>{
         setShowDelete(false);
-    };
+      }
+    
 
-    const renderItem = ({ item }) => (
-        <TouchableOpacity style={styles.itemContainer} onPress={handleEmployePress} onLongPress={openDelete}>
-          <TouchableOpacity style={showDelete ? styles.deleteIconContainer : styles.hideDeleteIconContainer} onPress={handleDelete}>
+      const renderItem = ({ item }) => (
+        <TouchableOpacity style={styles.itemContainer} onPress={() => handleEmployePress(item)} onLongPress={openDelete}>
+          <TouchableOpacity style={showDelete ? styles.deleteIconContainer : styles.hideDeleteIconContainer} onPress={() => handleDelete(item)}>
             <Icon name="delete-circle-outline" size={20} style={{ opacity: 1, color: "red" }} />
           </TouchableOpacity>  
-          <Image source={item.thumbnail} style={styles.thumbnail}  />
+          <Image source={{ uri: item.thumbnail }} style={styles.thumbnail}  />
           <Text style={styles.description}>{item.description}</Text>
           <Text style={styles.spends}><Text style={{fontWeight:"bold"}}>-</Text>{item.spends} MAD</Text>
           <Text style={styles.dateAdded}>{item.dateAdded}</Text>
         </TouchableOpacity>
-    );
+      );
+      
+  
+  const handleEmployePress = (item) => {
+    setIsModalSpoendsOpen(true);
+    setSelectedEmploye(item);
+  }
 
-    const handleSearch = (query) =>{
-        setSearchQuery(query);
-    }
-
-    const filteredItems = itemsData.filter(item =>
-      item.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
 
     return (
+      <TouchableNativeFeedback onPress={handleCloseAll}>
         <View style={styles.container}>
             <Header title={"Employés"} onSearching={handleSearch} />
             <FlatList
-                data={filteredItems}
+                data={filteredItems()}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id.toString()}
                 numColumns={2}
                 columnWrapperStyle={styles.columnWrapper}
-            />
+                ListEmptyComponent={<Text style={{color:"black", justifyContent:"center" , alignSelf:"center", color:"gray"}}>Aucun employé trouvé</Text>}
+                /> 
             <TouchableOpacity style={styles.button} onPress={()=>{setIsModalEmployeOpen(true)}}>
               <Text style={styles.buttonText}><Icon name="plus" size={40} color="white" /></Text>
             </TouchableOpacity>
-            <AddSpendModal visible={isModalSpoendsOpen} employee={selectedEmploye} onClose={() => setIsModalSpoendsOpen(false)} />
-            <EmployeeModal  visible={isModalEmployeOpen} onClose={()=>{setIsModalEmployeOpen(false)}}/>
-        </View>
+              <AddSpendModal visible={isModalSpoendsOpen} employee={selectedEmploye} onClose={() => setIsModalSpoendsOpen(false)} />
+              <EmployeeModal  visible={isModalEmployeOpen} onClose={()=>{setIsModalEmployeOpen(false)}}/>
+          </View>
+        </TouchableNativeFeedback>
     );
 };
 
