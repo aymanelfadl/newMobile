@@ -1,9 +1,9 @@
 import React, { useState , useEffect} from 'react';
 import { View, Modal, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import * as Progress from 'react-native-progress'
 import Icon from "react-native-vector-icons/FontAwesome"
 import DatePicker from 'react-native-date-picker';
+import * as Progress from 'react-native-progress'
 
 const AddSpendModal = ({ visible, employee, onClose }) => {
    
@@ -45,7 +45,7 @@ const AddSpendModal = ({ visible, employee, onClose }) => {
     }
 
     const handleCalendarPress = () => {
-        setIsDateModalOpen(!isDateModalOpen);
+        setIsDateModalOpen(true);
     }
     
     const handleSpendAmount = async () => {
@@ -53,17 +53,17 @@ const AddSpendModal = ({ visible, employee, onClose }) => {
         onClose();
         try {
             setUploadProgress(0);
-            const employeeDoc = await firestore().collection('itemsCollection').doc(employee.id).get();
+            const employeeDoc = await firestore().collection('EmployesCollection').doc(employee.id).get();
             const currentSpends = employeeDoc.data().spends ;
             const spendsToAdd = parseFloat(spends) ;
-            let totalSpends ; 
+            let totalSpends ;  
 
             const currentDate = new Date();
             const formattedDate = formatDate(currentDate);
 
             setUploadProgress(0.5);
             isNaN(spendsToAdd) ? totalSpends = currentSpends : totalSpends = spendsToAdd + currentSpends ; 
-            await firestore().collection('itemsCollection').doc(employee.id).update({
+            await firestore().collection('EmployesCollection').doc(employee.id).update({
                 spends: totalSpends,
                 dateAdded: formattedDate,
                 timestamp: new Date(),
@@ -71,7 +71,7 @@ const AddSpendModal = ({ visible, employee, onClose }) => {
     
             const logData = {
                 employeeId: employee.id,
-                operation: `Employee ${employee.description} spends updated`,
+                operation: "Les dépenses de l'employé " + employee.description + " ont été mises à jour",
                 timestamp: new Date(),
             };
             await firestore().collection('changeLogs').add(logData);
@@ -144,8 +144,8 @@ const AddSpendModal = ({ visible, employee, onClose }) => {
                 </Modal>}
             {isUploading && (
                 <View style={styles.uploadingContainer}>
-                    <Text style={{ color: 'black', marginBottom: 10, fontSize: 15 }}>Uploading{dots}</Text>
-                    <Progress.Pie progress={uploadProgress} size={50} color='black' />
+                    <Text style={{ color: 'crimson', marginBottom: 10, fontSize: 15 }}>Uploading{dots}</Text>
+                    <Progress.Pie progress={uploadProgress} size={50} color='crimson' />
                 </View>
             )}
         </>

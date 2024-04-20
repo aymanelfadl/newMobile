@@ -23,8 +23,7 @@ const EmployeScreen = () => {
           setItemsData(employees);
         })
         .catch(error => { console.error("Error fetching employees:", error); });
-
-    })
+    },[showDelete , isModalEmployeOpen , isModalSpoendsOpen])
 
 
     const fetchEmployeesFromFirestore = async () => {
