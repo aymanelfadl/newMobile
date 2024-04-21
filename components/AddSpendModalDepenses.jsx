@@ -71,6 +71,14 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
     return () => clearInterval(intervalId);
   }, [isUploading]);
 
+  const formatDate = (date) =>{
+    const currentDate = date;
+        const day = currentDate.getDate().toString().padStart(2, '0');
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        const year = currentDate.getFullYear().toString();
+        return `${day}/${month}/${year}`;
+}
+
   const handleLaunchCamera = () => {
     launchCamera({ mediaType: 'photo' }, (response) => {
       if (!response.didCancel && !response.error) {
@@ -90,7 +98,7 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
   };
 
   const startRecording = async () => {
-    const audioFile = 'audio.wav';
+    const audioFile = '../assets/audio.wav';
     try {
       AudioRecord.init({
         sampleRate: 44100,
@@ -148,9 +156,9 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
       let imageUrl;
 
       if (!thumbnail) {
-        imageUrl = 'https://firebasestorage.googleapis.com/v0/b/project-cb3df.appspot.com/o/generous.png?alt=media&token=5b79881e-cea2-4631-aa0e-5ae08f33a6b7';
+        imageUrl = 'https://firebasestorage.googleapis.com/v0/b/expense-manager-376bc.appspot.com/o/employes.png?alt=media&token=c33d6436-242a-480e-bb58-d52ebeaa642a';
       } else {
-        const imageName = 'employee_' + Date.now();
+        const imageName = 'depense_' + Date.now();
         const reference = storage().ref(imageName);
 
         await reference.putFile(thumbnail.uri);
@@ -182,9 +190,11 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
     }
   };
 
+
+  
   const handleAddArticle = async () => {
     setIsUploading(true);
-    const defaultName = `Article`;
+    const defaultName = "Depense " + formatDate(new Date());
     let finalDescription = description.trim() === '' ? defaultName : description;
 
     try {
@@ -201,34 +211,33 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
         setUploadProgress(0.25);
       }
 
-      const currentDate = new Date();
-      const day = currentDate.getDate().toString().padStart(2, '0');
-      const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-      const year = currentDate.getFullYear().toString();
-
-      const formattedDate = `${day}/${month}/${year}`;
-
+      
       setUploadProgress(0.50);
 
-      const articleRef = await firestore().collection('itemsCollection').add({
-        type: "article",
+      const depenseRef = await firestore().collection('DepensesCollection').add({
         description: finalDescription,
         thumbnail: mediaUrl,
         thumbnailType: uploadType === null ? "image" : uploadType,
         spends: spends,
-        dateAdded: formattedDate,
-        timestamp: currentDate,
+        dateAdded: formatDate(new Date()),
+        timestamp: new Date(),
       });
 
       setUploadProgress(0.75);
 
       await firestore().collection('changeLogs').add({
-        itemId: articleRef.id,
+        depenseId: depenseRef.id,
+        operation: `Un nouvel depense, "${finalDescription}", a été ajouté`,
+        type: "Add",
         timestamp: new Date(),
-        operation: `A new article, "${finalDescription}" has been added`
       });
 
       setUploadProgress(1);
+      setAudioFile(null),
+      setIsAudioPlaying(null);
+      setThumbnail(null);
+      setDescription("");
+      setSpends("");
 
       onClose();
     } catch (error) {
@@ -249,7 +258,7 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.title}>New Article</Text>
+              <Text style={styles.title}>Nouvelle Dépense</Text>
               {audioFile && (
                 <View>
                   {isAudioPlaying ? (
@@ -304,7 +313,7 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
               </View>
               <TextInput
                 style={styles.input}
-                placeholder="Description"
+                placeholder="Entrer description"
                 placeholderTextColor="black"
                 multiline={true}
                 numberOfLines={2}
@@ -313,7 +322,7 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
               />
               <TextInput
                 style={styles.input}
-                placeholder="Enter spend amount"
+                placeholder="Entrer montant dépense"
                 placeholderTextColor="black"
                 keyboardType="numeric"
                 value={spends}

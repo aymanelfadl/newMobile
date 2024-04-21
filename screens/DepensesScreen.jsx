@@ -3,8 +3,7 @@ import { StyleSheet, View ,FlatList, Text,TouchableOpacity,Image } from "react-n
 import Header from "../components/Header";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-import logoTest from "../assets/depenser-de.png"
-import AddSpendModal from "../components/AddSpendModalEmploye";
+import logoTest from "../assets/depenser-de.png";
 import AddSpendMofalDepenses from "../components/AddSpendModalDepenses";
 
 const DepensesScreen = () =>{
