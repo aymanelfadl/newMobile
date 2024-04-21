@@ -412,12 +412,9 @@ const styles = StyleSheet.create({
   },
   btn: {
     backgroundColor: "rgb(14 165 233)",
-    padding:10,
-    marginBottom: 15,
+    padding:13,
     marginTop:15,
-    padding: 8,
     borderRadius: 100,
-    marginBottom: 15,
   },
   btnText: {
     color: "#fff",

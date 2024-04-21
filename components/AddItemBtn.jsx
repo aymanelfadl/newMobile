@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { TouchableOpacity, View, StyleSheet, Image, Text } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Header from "./Header";
@@ -6,13 +6,15 @@ import Header from "./Header";
 import ExpenseIcon from "../assets/expenses.png";
 import IncomeIcon from "../assets/income.png";
 import EmployeeExpenseIcon from "../assets/recruitment.png";
+import AddSpendModalDepenses from "./AddSpendModalDepenses";
 
 const AddItemBtn = () => {
 
+  const [openDepenseModal, setOpenDepenseModal]= useState(false);
   const navigation = useNavigation(); 
 
   const DataBtns = [
-    { title:"Nouvelle Dépense", description: "Enregistrer une nouvelle dépense", onPress: () => navigation.navigate("Dépenses"), backgroundColor: "rgb(244 63 94)", icon: ExpenseIcon }, // Crimson
+    { title:"Nouvelle Dépense", description: "Enregistrer une nouvelle dépense", onPress: () => setOpenDepenseModal(true), backgroundColor: "rgb(244 63 94)", icon: ExpenseIcon }, // Crimson
     { title:"Nouveau Revenu", description: "Enregistrer un nouveau revenu", onPress: () => navigation.navigate("Revenu"), backgroundColor: "rgb(14 165 233)", icon: IncomeIcon }, // Hot pink
     { title:"Dépense pour Employé", description: "Enregistrer une dépense pour un employé", onPress: () => navigation.navigate('Employé'), backgroundColor: "rgb(55 65 81)", icon: EmployeeExpenseIcon }, // Dark magenta
   ]; 
@@ -37,11 +39,12 @@ const AddItemBtn = () => {
     ));
   };
   
-
+  
   return (
     <View style={styles.mainContainer}>
       <Header title={"Accueil"} MyIcon={"bell"} />
       {renderButtons()}
+      <AddSpendModalDepenses visible={openDepenseModal} onClose={() =>{setOpenDepenseModal(false)}}/>
     </View>
   );
 };

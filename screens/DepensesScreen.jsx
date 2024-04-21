@@ -46,7 +46,7 @@ const DepensesScreen = () =>{
 
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.itemContainer} onLongPress={openDelete} onPress={()=>setIsModalSpendsOpen(true)}>
+    <TouchableOpacity style={styles.itemContainer} onLongPress={openDelete} >
       <TouchableOpacity style={showDelete ? styles.deleteIconContainer : styles.hideDeleteIconContainer} onPress={() => handleDelete(item)}>
         <Icon name="delete-circle-outline" size={20} style={{ opacity: 1, color: "red" }} />
       </TouchableOpacity>  
@@ -68,7 +68,7 @@ const DepensesScreen = () =>{
                 columnWrapperStyle={styles.columnWrapper}
                 ListEmptyComponent={<Text style={{color:"black", justifyContent:"center" , alignSelf:"center", color:"gray"}}>Aucun dépenses trouvé</Text>}
             /> 
-            <TouchableOpacity style={styles.button} onPress={()=>{console.log("all good");}}>
+            <TouchableOpacity style={styles.button} onPress={()=>setIsModalSpendsOpen(true)}>
                 <Text style={styles.buttonText}><Icon name="plus" size={40} color="white" /></Text>
             </TouchableOpacity>
             <AddSpendMofalDepenses visible={isModalSpendsOpen} onClose={()=>setIsModalSpendsOpen(false)}></AddSpendMofalDepenses>
