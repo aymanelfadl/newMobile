@@ -1,84 +1,111 @@
 import React from "react";
 import { TouchableOpacity, View, StyleSheet, Image, Text } from "react-native";
-import LogoTest from "../assets/plus.png";
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
+import { useNavigation } from '@react-navigation/native';
+import Header from "./Header";
+
+import ExpenseIcon from "../assets/expenses.png";
+import IncomeIcon from "../assets/income.png";
+import EmployeeExpenseIcon from "../assets/recruitment.png";
 
 const AddItemBtn = () => {
-  const navigation = useNavigation(); // Access the navigation object
+
+  const navigation = useNavigation(); 
 
   const DataBtns = [
-    { title:"Depense", description: "Nouveau Depense", onPress: () => console.log("Nouveau Depense") },
-    { title:"Revenu",description: "Nouveau Revenu", onPress: () => console.log("Nouveau Revenu") },
-    { title:"Dépense pour Employe", description: "Nouveau Depense", onPress: () => navigation.navigate('Employé') }, // Navigate to EmployeScreen
-  ];
-
+    { title:"Nouvelle Dépense", description: "Enregistrer une nouvelle dépense", onPress: () => navigation.navigate("Dépenses"), backgroundColor: "rgb(244 63 94)", icon: ExpenseIcon }, // Crimson
+    { title:"Nouveau Revenu", description: "Enregistrer un nouveau revenu", onPress: () => navigation.navigate("Revenu"), backgroundColor: "rgb(14 165 233)", icon: IncomeIcon }, // Hot pink
+    { title:"Dépense pour Employé", description: "Enregistrer une dépense pour un employé", onPress: () => navigation.navigate('Employé'), backgroundColor: "rgb(55 65 81)", icon: EmployeeExpenseIcon }, // Dark magenta
+  ]; 
+  
+  
   const renderButtons = () => {
     return DataBtns.map((btnData, index) => (
-      <TouchableOpacity key={index} style={styles.itemContainer} onPress={btnData.onPress}>
+      <View key={index}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>{btnData.title}</Text>
-          <View style={styles.line}></View>
+          <Text style={[styles.title, {color: btnData.backgroundColor}]}>{btnData.title}</Text>
+          <View style={[styles.line,{backgroundColor: btnData.backgroundColor}]}></View>
         </View>
-        <Image source={LogoTest} style={styles.thumbnail} />
-        <Text style={styles.description}>{btnData.description}</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={[styles.itemContainer, { backgroundColor: btnData.backgroundColor }]} onPress={btnData.onPress}>
+          <View style={styles.iconContainer}>
+            <Image source={btnData.icon} style={styles.icon} />
+          </View>
+          <View style={styles.descriptionContainer}>
+            <Text style={styles.description}>{btnData.description}</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
     ));
   };
+  
 
   return (
-    <View style={styles.container}>
+    <View style={styles.mainContainer}>
+      <Header title={"Accueil"} MyIcon={"bell"} />
       {renderButtons()}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height:"100%",
-    backgroundColor: "#fff",
+  mainContainer:{
+    flex:1,
+    margin:0,
+    position:"relative",
+    backgroundColor: 'white',
   },
   itemContainer: {
-    marginVertical: 10,
-    borderRadius: 10,
-    borderWidth: 1,
+    borderRadius: 40,
     borderColor: "#ccc",
+    alignSelf: "center",
     alignItems: "center",
-    width:"90%",
-    justifyContent: "center",
-    padding: 10,
+    shadowColor: 'gray',
+    flexDirection: 'row',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+    elevation: 6,
+    padding: 15,
+    marginVertical: 30, 
+    width:"80%"
   },
   titleContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
+    alignItems: 'center', 
   },
   title: {
+    color :"black",
     fontSize: 18,
-    fontWeight: "bold",
-    color: "#000",
-    padding:15,
+    fontWeight: '600',
+    marginRight: 10,
+    paddingHorizontal:10,
+    paddingVertical:10
   },
   line: {
     flex: 1,
-    height: 1,
-    backgroundColor: '#ccc',
-    marginLeft: 10,
+    height: 2,
+    
   },
-  thumbnail: {
-    marginVertical: 8,
-    width: 60,
-    height: 60,
-    resizeMode: "cover",
-    marginBottom: 10,
+  iconContainer: {
+    marginRight: 10,
+    borderRadius: 100,
+    backgroundColor: "rgb(250 250 250)",
+    padding:10
+  },
+  icon: {
+    width: 40,
+    height: 40,
+  },
+  descriptionContainer: {
+    flex: 1,
+    marginLeft: 4,
   },
   description: {
     fontSize: 16,
-    fontWeight: "normal",
-    color: "#000",
-  }
+    color:"rgb(229 231 235)"
+  },
 });
 
 export default AddItemBtn;

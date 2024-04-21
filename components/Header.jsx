@@ -2,32 +2,41 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons';
 
-const Header = ({ title, onSearching }) => {
+const Header = ({ title, onSearching, MyIcon }) => {
 
-  const [openSearch ,setOpenSearch] = useState(false);
- 
+  const [openSearch, setOpenSearch] = useState(false);
+
   return (
     <View style={styles.container}>
-      {openSearch ? (
-        <View style={styles.searchContainer}>
-          <TouchableOpacity onPress={()=>{setOpenSearch(false)}}>
-            <Icon name="close" size={30} color="crimson" />
+      {MyIcon ? (
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>{title}</Text>
+          <TouchableOpacity onPress={() => setOpenSearch(!openSearch)} style={{ paddingLeft: 6 }}>
+            <Icon name={MyIcon} size={30} color="crimson" />
           </TouchableOpacity>
-          <TextInput
-          style={styles.searchInput}
-          placeholder="Rechercher..."
-          placeholderTextColor="gray"
-          onChangeText={(text) => {
-            onSearching(text); 
-          }}
-        />
         </View>
       ) : (
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{title}</Text>
-          <TouchableOpacity onPress={()=>{setOpenSearch(true)}} style={{paddingLeft:6}}>
+          <TouchableOpacity onPress={() => setOpenSearch(!openSearch)} style={{ paddingLeft: 6 }}>
             <Icon name="search" size={30} color="crimson" />
           </TouchableOpacity>
+        </View>
+      )}
+
+      {openSearch && (
+        <View style={styles.searchContainer}>
+          <TouchableOpacity onPress={() => setOpenSearch(false)}>
+            <Icon name="close" size={30} color="crimson" />
+          </TouchableOpacity>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Rechercher..."
+            placeholderTextColor="gray"
+            onChangeText={(text) => {
+              onSearching(text);
+            }}
+          />
         </View>
       )}
     </View>
@@ -36,7 +45,7 @@ const Header = ({ title, onSearching }) => {
 
 const styles = StyleSheet.create({
   container: {
-    zIndex:1000,
+    zIndex: 1000,
     backgroundColor: 'white',
     shadowColor: '#000',
     shadowOffset: {

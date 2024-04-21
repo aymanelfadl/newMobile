@@ -1,12 +1,14 @@
-import { View , Text } from "react-native";
+import { View , Text, StyleSheet } from "react-native";
 import AddItemBtn from "../components/AddItemBtn";
+import Header from "../components/Header";
 
 const HomeScreen = () =>{
 
     return (
-        <View>
+
           <AddItemBtn />
-        </View>
       );
 }
+
+
 export default HomeScreen;
