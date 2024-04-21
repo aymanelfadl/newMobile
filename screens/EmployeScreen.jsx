@@ -1,7 +1,7 @@
 import React, { useEffect, useState} from "react";
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image,TouchableNativeFeedback } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import AddSpendModal from "../components/AddSpendModal";
+import AddSpendModal from "../components/AddSpendModalEmploye";
 import EmployeeModal from "../components/EmployeeModal";
 import Header from "../components/Header";
 

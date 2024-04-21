@@ -5,7 +5,7 @@ import Icon from "react-native-vector-icons/FontAwesome"
 import DatePicker from 'react-native-date-picker';
 import * as Progress from 'react-native-progress'
 
-const AddSpendModal = ({ visible, employee, onClose }) => {
+const AddSpendModalEmploye = ({ visible, employee, onClose }) => {
    
     const [spends, setSpends] = useState('');
     const [selectedDate, setSelectedDate] = useState(new Date()); 
@@ -251,4 +251,4 @@ const styles = StyleSheet.create({
       
 });
 
-export default AddSpendModal;
+export default AddSpendModalEmploye;
