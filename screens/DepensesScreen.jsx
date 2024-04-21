@@ -1,10 +1,11 @@
-import { View , Text } from "react-native";
+import { View  } from "react-native";
+import Header from "../components/Header";
 
 const DepensesScreen = () =>{
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{color:"black"}}>Depense!</Text>
+        <View>
+            <Header ></Header>
         </View>
       );
 }

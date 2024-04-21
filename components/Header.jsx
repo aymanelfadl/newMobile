@@ -11,7 +11,7 @@ const Header = ({ title, onSearching, MyIcon }) => {
       {MyIcon ? (
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{title}</Text>
-          <TouchableOpacity onPress={() => setOpenSearch(!openSearch)} style={{ paddingLeft: 6 }}>
+          <TouchableOpacity onPress={() =>console.log("notif clicked")} style={{ paddingLeft: 6 }}>
             <Icon name={MyIcon} size={30} color="crimson" />
           </TouchableOpacity>
         </View>
@@ -26,9 +26,6 @@ const Header = ({ title, onSearching, MyIcon }) => {
 
       {openSearch && (
         <View style={styles.searchContainer}>
-          <TouchableOpacity onPress={() => setOpenSearch(false)}>
-            <Icon name="close" size={30} color="crimson" />
-          </TouchableOpacity>
           <TextInput
             style={styles.searchInput}
             placeholder="Rechercher..."
@@ -74,11 +71,11 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 20,
+    padding:10,
   },
   searchInput: {
     flex: 1,
-    marginLeft: 8,
+    marginHorizontal: 10,
     fontSize: 16,
     paddingVertical: 8,
     paddingHorizontal: 10,
