@@ -267,23 +267,39 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
               <View style={styles.iconContainer}>
                 {!isRecording && !audioFile && (
                   <>
-                    <TouchableOpacity onPress={handleLaunchCamera} style={styles.icon}>
-                      <Icon name="camera" size={30} color="black" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handleLaunchImageLibrary} style={styles.icon}>
-                      <Icon name="folder-open" color="black" size={30}></Icon>
-                    </TouchableOpacity>
+                    <View style={styles.iconWrapper}>
+                      <TouchableOpacity onPress={handleLaunchCamera}>
+                        <View style={styles.icon}>
+                          <Icon name="camera" size={30} color="black" />
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                    <View style={styles.iconWrapper}>
+                      <TouchableOpacity onPress={handleLaunchImageLibrary}>
+                        <View style={styles.icon}>
+                          <Icon name="folder-open" color="black" size={30} />
+                        </View>
+                      </TouchableOpacity>
+                    </View>
                   </>
                 )}
                 {!thumbnail && !isAudioPlaying && !isRecording && (
-                  <TouchableOpacity onPress={startRecording} disabled={isRecording} style={styles.icon}>
-                    <Icon name="microphone" size={30} color="black" />
-                  </TouchableOpacity>
+                  <View style={styles.iconWrapper}>
+                    <TouchableOpacity onPress={startRecording} disabled={isRecording}>
+                      <View style={styles.icon}>
+                        <Icon name="microphone" size={30} color="black" />
+                      </View>
+                    </TouchableOpacity>
+                  </View>
                 )}
                 {isRecording && (
-                  <TouchableOpacity onPress={stopRecording} style={styles.icon}>
-                    <Icon name="microphone-slash" size={30} color="black" />
-                  </TouchableOpacity>
+                  <View style={styles.iconWrapper}>
+                    <TouchableOpacity onPress={stopRecording}>
+                      <View style={styles.icon}>
+                        <Icon name="microphone-slash" size={30} color="red" />
+                      </View>
+                    </TouchableOpacity>
+                  </View>
                 )}
               </View>
               <TextInput
@@ -307,7 +323,7 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
                   }
                 }}
               />
-              <TouchableOpacity style={styles.btn } onPress={handleAddArticle}>
+              <TouchableOpacity style={styles.btn} onPress={handleAddArticle}>
                 <Text style={styles.btnText}>Add Article</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.btn, styles.closeButton]} onPress={onClose}>
@@ -329,65 +345,61 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
 
 const styles = StyleSheet.create({
   modalContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
   },
-  modalHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 30,
-  },    
+  modalContent: {
+    backgroundColor: "#fff",
+    paddingHorizontal: 40,
+    paddingVertical: 30,
+    borderRadius: 30,
+    width: '80%',
+    shadowColor: 'crimson',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 1,
+    elevation: 3,
+  },
+  title: {
+    fontSize: 25,
+    marginBottom: 15,
+    fontWeight: '600',
+    textAlign: "center",
+    color: "rgb(38 38 38)"
+  },
   iconContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     marginVertical: 25,
   },
+  iconWrapper: {
+    marginHorizontal: 10,
+    borderRadius: 40,
+    borderWidth: 0.1, 
+    borderColor: "crimson",
+
+    padding: 10,
+    width:"30%"
+  },
   icon: {
-    marginHorizontal: 25,
+    alignItems: 'center',
   },
   audioIconContainer: {
     alignItems: 'center',
   },
-  modalContent: {
-      backgroundColor: '#fff',
-      paddingHorizontal: 40,
-      paddingVertical: 30,
-      borderRadius: 30,
-      width: '80%',
-      shadowColor: 'crimson',
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 1,
-      elevation: 3,
-    },
-    title: {
-      fontSize: 25,
-      marginBottom: 15,
-      fontWeight: '600',
-      textAlign: "center",
-      color: "rgb(38 38 38)"
-    },
   input: {
-      borderWidth: 1,
-      borderColor: 'crimson',
-      backgroundColor: "#FFF",
-      height:60,
-      borderRadius: 15,
-      color: "black",
-      paddingHorizontal: 10,
-      marginBottom: 12,
-    },
-  textDate:{
-      fontSize: 20,
-      fontWeight: '400',
-      textAlign: "center",
-      color: "rgb(38 38 38)",
-      marginBottom:30,
+    borderWidth: 1,
+    borderColor: 'crimson',
+    backgroundColor: "#FFF",
+    height:60,
+    borderRadius: 15,
+    color: "black",
+    paddingHorizontal: 10,
+    marginBottom: 12,
   },
   btn: {
     backgroundColor: "rgb(14 165 233)",
@@ -397,43 +409,37 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 100,
     marginBottom: 15,
-},
+  },
   btnText: {
-      color: "#fff",
-      textAlign: "center",
+    color: "#fff",
+    textAlign: "center",
   },
   closeButton: {
-      backgroundColor: "crimson", 
-      padding: 8,
-      borderRadius: 100,
-    },
-  closeButtonText: {
-      color: "#fff",
-      textAlign: "center",
+    backgroundColor: "crimson", 
+    padding: 8,
+    borderRadius: 100,
   },
-  AddspendBtn: {
-      backgroundColor: "rgb(14 165 233)",
-      padding:10,
-      marginBottom: 15,
-      marginTop:15
+  closeButtonText: {
+    color: "#fff",
+    textAlign: "center",
   },
   uploadingContainer: {
-      position: 'absolute',
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'rgba(250, 250, 250, 0.9)', 
-    },
-    thumbnail: {
-      width: 100,
-      height: 100,
-      borderRadius: 50,
-      marginBottom: 10,
-      alignSelf: 'center',
-    },
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(250, 250, 250, 0.9)', 
+  },
+  thumbnail: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
+    alignSelf: 'center',
+  },
 });
 
 export default AddSpendModalDepenses;
