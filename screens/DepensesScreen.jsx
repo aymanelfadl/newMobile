@@ -1,88 +1,93 @@
-import { useState } from "react";
-import { StyleSheet, View ,FlatList, Text,TouchableOpacity,Image } from "react-native";
+import React, { useState,useEffect } from "react";
+import { StyleSheet, View, FlatList, Text, TouchableOpacity, Image, Modal } from "react-native";
 import Header from "../components/Header";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import firestore from '@react-native-firebase/firestore';
+import AddSpendModalDepenses from "../components/AddSpendModalDepenses";
 
-import logoTest from "../assets/depenser-de.png";
-import AddSpendMofalDepenses from "../components/AddSpendModalDepenses";
-
-const DepensesScreen = () =>{
-  // test Data
-  const testData = [
-    {
-      id: 1,
-      thumbnail:logoTest ,
-      description: 'Item 1',
-      spends: 50,
-      dateAdded: '2024-04-20',
-    },
-    {
-      id: 2,
-      thumbnail: logoTest,
-      description: 'Item 2',
-      spends: 100,
-      dateAdded: '2024-04-21',
-    },
-    {
-      id: 3,
-      thumbnail: logoTest,
-      description: 'Item 3',
-      spends: 75,
-      dateAdded: '2024-04-22',
-    },
-  ];
-  
-  const [showDelete, setShowDelete] = useState(false);
+const DepensesScreen = () => {
+  const [items, setItems] = useState([]);
   const [isModalSpendsOpen, setIsModalSpendsOpen] = useState(false);
-  const [isModaldepenseOpen, setIsModalDepenseOpen ] = useState(false);
-  const openDelete = () => {
-    setShowDelete(true);
-  };
-  
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  const handleDelete = async (item) => {
-    // TODO
+  useEffect(() => {
+    const unsubscribe = firestore().collection('DepensesCollection').onSnapshot(snapshot => {
+      const fetchedItems = [];
+      snapshot.forEach(documentSnapshot => {
+        const data = documentSnapshot.data();
+        fetchedItems.push({
+          id: documentSnapshot.id,
+          ...data,
+          timestamp: data.timestamp.toDate(),
+          isAudioPlaying: false,
+        });
+      });
+      fetchedItems.sort((a, b) => b.timestamp - a.timestamp);
+      setItems(fetchedItems);
+    }, error => {
+      console.error('Error fetching data:', error);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const openImageModal = (imageUri) => {
+    setSelectedImage(imageUri);
   };
 
+  const closeImageModal = () => {
+    setSelectedImage(null);
+  };
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.itemContainer} onLongPress={openDelete} >
-      <TouchableOpacity style={showDelete ? styles.deleteIconContainer : styles.hideDeleteIconContainer} onPress={() => handleDelete(item)}>
-        <Icon name="delete-circle-outline" size={20} style={{ opacity: 1, color: "red" }} />
-      </TouchableOpacity>  
-      <Image source={item.thumbnail} style={styles.thumbnail}  />
+    <TouchableOpacity style={styles.itemContainer} onPress={() => openImageModal(item.thumbnail)}>
+      <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
       <Text style={styles.description}>{item.description}</Text>
-      <Text style={styles.spends}><Text style={{fontWeight:"bold"}}>-</Text>{item.spends} MAD</Text>
+      <Text style={styles.spends}><Text style={{ fontWeight: "bold" }}>-</Text>{item.spends} MAD</Text>
       <Text style={styles.dateAdded}>{item.dateAdded}</Text>
     </TouchableOpacity>
   );
 
-    return (
-        <View style={styles.container}>
-            <Header title={"Dépenses"} ></Header>
-            <FlatList
-                data={testData}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id.toString()}
-                numColumns={2}
-                columnWrapperStyle={styles.columnWrapper}
-                ListEmptyComponent={<Text style={{color:"black", justifyContent:"center" , alignSelf:"center", color:"gray"}}>Aucun dépenses trouvé</Text>}
-            /> 
-            <TouchableOpacity style={styles.button} onPress={()=>setIsModalSpendsOpen(true)}>
-                <Text style={styles.buttonText}><Icon name="plus" size={40} color="white" /></Text>
-            </TouchableOpacity>
-            <AddSpendMofalDepenses visible={isModalSpendsOpen} onClose={()=>setIsModalSpendsOpen(false)}></AddSpendMofalDepenses>
+  return (
+    <View style={styles.container}>
+      <Header title={"Dépenses"} />
+      <FlatList
+        data={items}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        numColumns={2}
+        columnWrapperStyle={styles.columnWrapper}
+        ListEmptyComponent={<Text style={{ color: "black", justifyContent: "center", alignSelf: "center", color: "gray" }}>Aucun dépenses trouvé</Text>}
+      />
+      <TouchableOpacity style={styles.button} onPress={() => setIsModalSpendsOpen(true)}>
+        <Text style={styles.buttonText}><Icon name="plus" size={40} color="white" /></Text>
+      </TouchableOpacity>
+      <AddSpendModalDepenses visible={isModalSpendsOpen} onClose={() => setIsModalSpendsOpen(false)} />
+      
+      {/* Image Viewer Modal */}
+      <Modal
+        visible={selectedImage !== null}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={closeImageModal}
+      >
+        <View style={styles.modalContainer}>
+          <TouchableOpacity style={styles.closeButton} onPress={closeImageModal}>
+            <Icon name="close" size={30} color="white" />
+          </TouchableOpacity>
+          <Image source={{ uri: selectedImage }} style={styles.modalImage} />
         </View>
-      );
+      </Modal>
+    </View>
+  );
 }
 
-
 const styles = StyleSheet.create({
-  container:{
+  container: {
     flex: 1,
-      position: 'relative',
-      margin:0,
-      backgroundColor: 'rgb(249 250 251)',
+    position: 'relative',
+    margin: 0,
+    backgroundColor: 'rgb(249 250 251)',
   },
   itemContainer: {
     flex: 1,
@@ -103,24 +108,11 @@ const styles = StyleSheet.create({
     elevation: 6,
     marginBottom: 10,
   },
-  deleteIconContainer: {
-    position: 'absolute',
-    backgroundColor: "#FFF",
-    borderRadius: 100,
-    padding: 5,
-    top: 5,
-    right: 5,
-    zIndex: 100,
-  },
-  hideDeleteIconContainer: {
-    display: "none",
-  },
   thumbnail: {
     width: 100,
     height: 100,
     resizeMode: 'cover',
     marginBottom: 10,
-    zIndex: 100,
   },
   description: {
     fontSize: 16,
@@ -141,26 +133,6 @@ const styles = StyleSheet.create({
   columnWrapper: {
     justifyContent: 'space-between',
   },
-  addButton: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  optionsContainer: {
-    position: 'absolute',
-    bottom: 90,
-    right: 21,
-  },
-  option: {
-    backgroundColor: '#262626',
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 25,
-    marginVertical: 8
-  },
-  optionText: {
-    color: '#fff',
-    fontSize: 90,
-  },
   button: {
     position: 'absolute',
     bottom: 30,
@@ -171,11 +143,31 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation : 5
+    elevation: 5
   },
   buttonText: {
     color: '#fff',
     fontSize: 50,
   },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalImage: {
+    width: '80%',
+    height: '80%',
+    resizeMode: 'contain',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 10,
+    borderRadius: 20,
+  },
 })
+
 export default DepensesScreen;

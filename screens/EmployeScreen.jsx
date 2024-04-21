@@ -4,7 +4,6 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AddSpendModal from "../components/AddSpendModalEmploye";
 import EmployeeModal from "../components/EmployeeModal";
 import Header from "../components/Header";
-
 import firestore from '@react-native-firebase/firestore';
 
 
@@ -35,7 +34,6 @@ const EmployeScreen = () => {
         setItemsData(employees);
       });
     
-      // Return a cleanup function to unsubscribe from the listener when the component unmounts
       return () => unsubscribe();
     }, []);
     
