@@ -35,15 +35,16 @@ const AnalyseScreen = () => {
   };
   
   const getTotalEmployes = () => {
-    const unsubscribe = firestore().collection('EmployesCollection').onSnapshot(snapshot => {
+    const unsubscribe = firestore().collection('changeLogs').onSnapshot(snapshot => {
       let totalEmployes = 0;
-      snapshot.forEach(employe => {
-        totalEmployes -=Number( employe.data().spends );  
+      snapshot.forEach(log => {
+        if (log.data().type === "Update" && typeof log.data().newSpends === "number") {
+          totalEmployes -= log.data().newSpends;
+        }
       });
       setTotalDepenseEmp(totalEmployes);
     });
   
-
     return unsubscribe;
   };
   

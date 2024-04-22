@@ -71,7 +71,7 @@ const RevenuScreen = () => {
     if (item.thumbnailType === 'audio') {
       return (
         <TouchableOpacity style={styles.itemContainer} onPress={()=>handleAudioPress(item)}>
-          <Text>
+          <Text style={{marginVertical:8}}>
             <Icon name={isPlaying ? "pause-circle" : "play-circle"} size={50} color="black" />
           </Text>
           <Text style={styles.description}>{item.description}</Text>
