@@ -1,96 +1,92 @@
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import HomeScreen from './screens/HomeScreen';
 import DepensesScreen from './screens/DepensesScreen';
 import RevenuScreen from './screens/RevenuScreen';
 import EmployeScreen from './screens/EmployeScreen';
 import AnalyseScreen from './screens/AnalyseScreen';
+import NotificationsScreen from './screens/NotificationsScreen';
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator(); // Create a stack navigator
+
+// Create a component for the tab navigator
+const TabNavigator = () => (
+  <Tab.Navigator
+    screenOptions={({ route }) => ({
+      tabBarActiveTintColor: 'crimson',
+      tabBarInactiveTintColor: 'gray',
+      tabBarStyle: {
+        display: 'flex',
+        height: 50,
+      },
+      tabBarIcon: ({ color, size }) => {
+        let iconName;
+
+        if (route.name === 'Accueil') {
+          iconName = 'home';
+        } else if (route.name === 'Dépenses') {
+          iconName = 'credit-card';
+        } else if (route.name === 'Revenu') {
+          iconName = 'currency-usd';
+        } else if (route.name === 'Employé') {
+          iconName = 'account';
+        } else if (route.name === 'Analyse') {
+          iconName = 'home-analytics';
+        }
+
+        return <Icon name={iconName} size={size} color={color} />;
+      },
+      headerShown: false,
+    })}
+  >
+    <Tab.Screen
+      name="Accueil"
+      component={HomeScreen}
+    />
+    {/* depensesss ================================================== */}
+    <Tab.Screen
+      name="Dépenses"
+      component={DepensesScreen}
+    />
+    {/* revenu ======================================== */}
+    <Tab.Screen
+      name="Revenu"
+      component={RevenuScreen}
+    />
+    {/* employee================================= */}
+    <Tab.Screen
+      name="Employé"
+      component={EmployeScreen}
+    />
+    <Tab.Screen
+      name="Analyse"
+      component={AnalyseScreen}
+    />
+  </Tab.Navigator>
+);
 
 const App = () => {
-
   return (
+    <GestureHandlerRootView>
     <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarActiveTintColor: 'crimson',
-          tabBarInactiveTintColor: 'gray',
-          tabBarStyle: {
-            display: 'flex',
-            height: 50,
-          },
-          tabBarIcon: ({ color, size }) => {
-            let iconName;
-
-            if (route.name === 'Accueil') {
-              iconName = 'home';
-            } else if (route.name === 'Dépenses') {
-              iconName = 'credit-card';
-            } else if (route.name === 'Revenu') {
-              iconName = 'currency-usd';
-            } else if (route.name === 'Employé') {
-              iconName = 'account';
-            } else if (route.name === 'Analyse') {
-              iconName = 'home-analytics';
-            }
-
-            return <Icon name={iconName} size={size} color={color} />;
-          },
-          headerShown: false, // Hide the top header
-        })}
-      >
-        <Tab.Screen
-          name="Accueil"
-          component={HomeScreen}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <Icon name="home" size={size} color={color} />
-            ),
-          }}
+      <Stack.Navigator>
+        <Stack.Screen
+          name="TabNavigator" 
+          component={TabNavigator} 
+          options={{ headerShown: false }} 
         />
-        {/* depensesss ================================================== */}
-        <Tab.Screen
-          name="Dépenses"
-          component={DepensesScreen}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <Icon name="credit-card" size={size} color={color} />
-            ),
-          }}
+        <Stack.Screen
+          name="Notifications" 
+          component={NotificationsScreen}  
         />
-        {/* revenu ======================================== */}
-        <Tab.Screen
-          name="Revenu"
-          component={RevenuScreen}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <Icon name="currency-usd" size={size} color={color} />
-            ),
-          }}
-        />
-        {/* employee================================= */}
-        <Tab.Screen
-          name="Employé"
-          component={EmployeScreen}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <Icon name="account" size={size} color={color} />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Analyse"
-          component={AnalyseScreen}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <Icon name="home-analytics" size={size} color={color} />
-            ),
-          }}
-        />
-      </Tab.Navigator>
+      </Stack.Navigator>
     </NavigationContainer>
+    </GestureHandlerRootView>
   );
 };
 

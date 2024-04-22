@@ -9,11 +9,10 @@ import DepenseIcon from "../assets/depenser-de-largent.png"
 
 const ShowAnalyse = ({ total, totalEmp, totalDepense, totalRevenu }) => {
   
-  
   const renderLabels = () => {
     const labels = [
         {
-          title: "Total",
+          title: "Solde Total",
           description: total,
           icon: TotalIcon,
         },
@@ -34,17 +33,16 @@ const ShowAnalyse = ({ total, totalEmp, totalDepense, totalRevenu }) => {
         },
       ];
       
-
     return labels.map((item, index) => (
       <View key={index} style={styles.labelContainer}>
         <View style={styles.titleContainer}>
-          <View style={[styles.line, { backgroundColor: item.description > 0 ? "green" : "rgb(244 63 94)", }]} />
-          <Text style={[styles.title, {  color: item.description > 0 ? "green" : "rgb(244 63 94)", }]}>
+        <View style={[styles.line,{ backgroundColor: item.title === "Solde Total" ? "rgb(75 85 99)" : (item.description > 0 ? "green" : "rgb(244 63 94)")}]} />
+          <Text style={[styles.title,{ color: item.title === "Solde Total" ? "rgb(75 85 99)" : (item.description > 0 ? "green" : "rgb(244 63 94)")}]} >
             {item.title}
           </Text>
-          <View style={[styles.line,{ backgroundColor: item.description > 0 ? "green" : "rgb(244 63 94)", }]} />
+          <View style={[styles.line,{ backgroundColor: item.title === "Solde Total" ? "rgb(75 85 99)" : (item.description > 0 ? "green" : "rgb(244 63 94)")}]} />
         </View>
-        <View style={[styles.itemContainer, { backgroundColor: item.description > 0 ? "green" : "rgb(244 63 94)", }]}>
+        <View style={[styles.itemContainer, { backgroundColor: item.title === "Solde Total" ? " rgb(75 85 99)" : (item.description > 0 ? "green" : "rgb(244 63 94)"), padding : item.title==="Solde Total" ? 15 : 8 }]}>
           <View style={styles.iconContainer}>
             {item.icon && <Image source={item.icon} style={styles.icon} />}
           </View>
@@ -60,12 +58,6 @@ const ShowAnalyse = ({ total, totalEmp, totalDepense, totalRevenu }) => {
 };
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    justifyContent: "center", 
-    alignItems: "center",
-    backgroundColor: "white",
-  },
   labelContainer: {
     marginBottom: 20,
   },
@@ -89,6 +81,8 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: "row",
     alignItems: "center",
+    alignSelf:"center",
+    width:"90%",
   },
   title: {
     fontSize: 18,
@@ -121,6 +115,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     alignSelf: "center",
     color: "white",
+  },
+  mainContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

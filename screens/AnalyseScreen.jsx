@@ -39,6 +39,7 @@ const AnalyseScreen = () => {
       let totalEmployes = 0;
       snapshot.forEach(log => {
         if (log.data().type === "Update" && typeof log.data().newSpends === "number") {
+
           totalEmployes -= log.data().newSpends;
         }
       });
@@ -68,7 +69,7 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'relative',
     margin: 0,
-    backgroundColor: 'rgb(249 250 251)',
+    backgroundColor:"white"
   },
 });
 
