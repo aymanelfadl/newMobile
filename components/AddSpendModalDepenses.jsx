@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PermissionsAndroid, View, Modal, StyleSheet, Text, TextInput, Image, TouchableOpacity } from 'react-native';
+import { PermissionsAndroid, View, Modal, StyleSheet, Text, TextInput, Image, TouchableOpacity, FlatList } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AudioRecord from 'react-native-audio-record';
@@ -20,6 +20,7 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [dots, setDots] = useState('');
+  const [suggestionss , setSuggestions] = useState([]);
 
   const requestPermissions = async () => {
     try {
@@ -44,8 +45,21 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
     }
   };
 
+  const fetchSuggestions = () => {
+    const unsubscribe = firestore().collection('DepensesCollection').onSnapshot(snapshot => {
+      const fetchedSuggestions = snapshot.docs.map(doc => doc.data().description);
+      setSuggestions(fetchedSuggestions);
+    });
+  
+    return unsubscribe;
+  };
+  
+
+
   useEffect(() => {
+    fetchSuggestions();
     requestPermissions();
+
   }, []);
 
   const updateDots = () => {
@@ -247,6 +261,35 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
     }
   };
 
+  const filteredSuggestions = [...new Set(suggestionss.filter(item =>
+    new RegExp('^' + description.toLowerCase(), 'g').test(item.toLowerCase())
+  ))];
+  
+  
+
+  const renderSuggestionItem = ({ item }) => (
+    <TouchableOpacity onPress={() => setDescription(item)}>
+      <Text style={styles.suggestionItem}>{item}</Text>
+    </TouchableOpacity>
+  );
+  
+
+  const renderSuggestions = () => {
+     return (
+    <View style={styles.suggestionsContainer}>
+      {description.length > 0 && (
+        <FlatList
+          data={filteredSuggestions}
+          renderItem={renderSuggestionItem}
+          keyExtractor={(item, index) => index.toString()}
+          style={{height:"20%", marginBottom:10 ,}}
+        />
+      )}
+    </View>
+  );
+  };
+
+
   return (
     <>
       {!isUploading &&
@@ -320,6 +363,9 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
                 value={description}
                 onChangeText={setDescription}
               />
+               {filteredSuggestions.length > 0 && (
+                    renderSuggestions()
+                )}
               <TextInput
                 style={styles.input}
                 placeholder="Entrer montant dépense"
@@ -390,7 +436,6 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     borderWidth: 0.1, 
     borderColor: "crimson",
-
     padding: 10,
     width:"30%"
   },
@@ -446,6 +491,20 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignSelf: 'center',
   },
+  suggestionItem: {
+    backgroundColor: '#ffffff',
+    paddingVertical: 15,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    marginVertical:2,
+    borderColor: '#dcdcdc',
+    fontSize: 15,
+    color: 'black',
+    
+  },
+  
+  
 });
 
 export default AddSpendModalDepenses;
