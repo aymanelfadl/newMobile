@@ -12,9 +12,8 @@ import AnalyseScreen from './screens/AnalyseScreen';
 import NotificationsScreen from './screens/NotificationsScreen';
 
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator(); // Create a stack navigator
+const Stack = createStackNavigator(); 
 
-// Create a component for the tab navigator
 const TabNavigator = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
@@ -83,6 +82,12 @@ const App = () => {
         <Stack.Screen
           name="Notifications" 
           component={NotificationsScreen}  
+          options={{
+            headerTitleStyle: {
+                color: 'crimson'
+            },
+            headerTintColor: 'crimson' 
+        }}
         />
       </Stack.Navigator>
     </NavigationContainer>
