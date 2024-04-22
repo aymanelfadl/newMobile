@@ -240,7 +240,7 @@ const AddSpendModalRevenu = ({ visible, onClose }) => {
       setUploadProgress(0.75);
 
       await firestore().collection('changeLogs').add({
-        revenuId: depenseRef.id,
+        Id: depenseRef.id,
         operation: `Un nouvel revenu, "${finalDescription}", a été ajouté`,
         type: "Add",
         timestamp: new Date(),

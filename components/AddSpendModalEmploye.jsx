@@ -69,10 +69,11 @@ const AddSpendModalEmploye = ({ visible, employee, onClose }) => {
             });
     
             const logData = {
-                employeeId: employee.id,
+                Id: employee.id,
                 type:"Update",
                 operation: "Les dépenses de l'employé " + employee.description + " ont été mises à jour",
                 timestamp: new Date(),
+                newSpends: spendsToAdd,
             };
             await firestore().collection('changeLogs').add(logData);
             setUploadProgress(1);

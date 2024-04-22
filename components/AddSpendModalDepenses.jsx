@@ -240,7 +240,7 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
       setUploadProgress(0.75);
 
       await firestore().collection('changeLogs').add({
-        depenseId: depenseRef.id,
+        Id: depenseRef.id,
         operation: `Un nouvel depense, "${finalDescription}", a été ajouté`,
         type: "Add",
         timestamp: new Date(),
