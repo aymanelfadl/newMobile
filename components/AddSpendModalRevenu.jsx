@@ -8,7 +8,7 @@ import firestore from '@react-native-firebase/firestore';
 import Sound from 'react-native-sound';
 import * as Progress from 'react-native-progress';
 
-const AddSpendModalDepenses = ({ visible, onClose }) => {
+const AddSpendModalRevenu = ({ visible, onClose }) => {
   const [description, setDescription] = useState('');
   const [spends, setSpends] = useState('');
   const [thumbnail, setThumbnail] = useState(null);
@@ -46,7 +46,7 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
   };
 
   const fetchSuggestions = () => {
-    const unsubscribe = firestore().collection('DepensesCollection').onSnapshot(snapshot => {
+    const unsubscribe = firestore().collection('RevenusCollection').onSnapshot(snapshot => {
       const fetchedSuggestions = snapshot.docs.map(doc => doc.data().description);
       setSuggestions(fetchedSuggestions);
     });
@@ -170,9 +170,9 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
       let imageUrl;
 
       if (!thumbnail) {
-        imageUrl = 'https://firebasestorage.googleapis.com/v0/b/expense-manager-376bc.appspot.com/o/depenser-de.png?alt=media&token=85cab1ea-5c3f-4f15-a4ac-a60de4fec212';
-      } else {
-        const imageName = 'depense_' + Date.now();
+        imageUrl = "https://firebasestorage.googleapis.com/v0/b/expense-manager-376bc.appspot.com/o/cost.png?alt=media&token=2d9db609-59ce-4237-8e94-633bae1e33aa";
+    } else {
+        const imageName = 'revenu_' + Date.now();
         const reference = storage().ref(imageName);
 
         await reference.putFile(thumbnail.uri);
@@ -208,7 +208,7 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
   
   const handleAddArticle = async () => {
     setIsUploading(true);
-    const defaultName = "Depense " + formatDate(new Date());
+    const defaultName = "Revenu " + formatDate(new Date());
     let finalDescription = description.trim() === '' ? defaultName : description;
 
     try {
@@ -228,7 +228,7 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
       
       setUploadProgress(0.50);
 
-      const depenseRef = await firestore().collection('DepensesCollection').add({
+      const depenseRef = await firestore().collection('RevenusCollection').add({
         description: finalDescription,
         thumbnail: mediaUrl,
         thumbnailType: uploadType === null ? "image" : uploadType,
@@ -240,8 +240,8 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
       setUploadProgress(0.75);
 
       await firestore().collection('changeLogs').add({
-        depenseId: depenseRef.id,
-        operation: `Un nouvel depense, "${finalDescription}", a été ajouté`,
+        revenuId: depenseRef.id,
+        operation: `Un nouvel revenu, "${finalDescription}", a été ajouté`,
         type: "Add",
         timestamp: new Date(),
       });
@@ -301,7 +301,7 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.title}>Nouvelle Dépense</Text>
+              <Text style={styles.title}>Nouveau Revenu</Text>
               {audioFile && (
                 <View>
                   {isAudioPlaying ? (
@@ -368,7 +368,7 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
                 )}
               <TextInput
                 style={styles.input}
-                placeholder="Entrer montant dépense"
+                placeholder="Entrer montant revenu"
                 placeholderTextColor="black"
                 keyboardType="numeric"
                 value={spends}
@@ -379,7 +379,7 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
                 }}
               />
               <TouchableOpacity style={styles.btn} onPress={handleAddArticle}>
-                <Text style={styles.btnText}>Ajouter Depense</Text>
+                <Text style={styles.btnText}>Ajouter Revenu</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.btn, styles.closeButton]} onPress={onClose}>
                 <Text style={styles.closeButtonText}>Fermer</Text>
@@ -507,4 +507,4 @@ const styles = StyleSheet.create({
   
 });
 
-export default AddSpendModalDepenses;
+export default AddSpendModalRevenu;

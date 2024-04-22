@@ -7,15 +7,17 @@ import ExpenseIcon from "../assets/expenses.png";
 import IncomeIcon from "../assets/income.png";
 import EmployeeExpenseIcon from "../assets/recruitment.png";
 import AddSpendModalDepenses from "./AddSpendModalDepenses";
+import AddSpendModalRevenu from "./AddSpendModalRevenu";
 
 const AddItemBtn = () => {
 
   const [openDepenseModal, setOpenDepenseModal]= useState(false);
+  const [openRevenuModal, setOpenRevenuModal]= useState(false);
   const navigation = useNavigation(); 
 
   const DataBtns = [
     { title:"Nouvelle Dépense", description: "Enregistrer une nouvelle dépense", onPress: () => setOpenDepenseModal(true), backgroundColor: "rgb(244 63 94)", icon: ExpenseIcon }, // Crimson
-    { title:"Nouveau Revenu", description: "Enregistrer un nouveau revenu", onPress: () => navigation.navigate("Revenu"), backgroundColor: "rgb(14 165 233)", icon: IncomeIcon }, // Hot pink
+    { title:"Nouveau Revenu", description: "Enregistrer un nouveau revenu", onPress: () => setOpenRevenuModal(true), backgroundColor: "rgb(14 165 233)", icon: IncomeIcon }, // Hot pink
     { title:"Dépense pour Employé", description: "Enregistrer une dépense pour un employé", onPress: () => navigation.navigate('Employé'), backgroundColor: "rgb(55 65 81)", icon: EmployeeExpenseIcon }, // Dark magenta
   ]; 
   
@@ -44,7 +46,8 @@ const AddItemBtn = () => {
     <View style={styles.mainContainer}>
       <Header title={"Accueil"} MyIcon={"bell"} />
       {renderButtons()}
-      <AddSpendModalDepenses visible={openDepenseModal} onClose={() =>{setOpenDepenseModal(false)}}/>
+      <AddSpendModalDepenses visible={openDepenseModal} onClose={() =>{setOpenDepenseModal(false)}} />
+      <AddSpendModalRevenu visible={openRevenuModal} onClose={() =>{setOpenRevenuModal(false)}} />      
     </View>
   );
 };
