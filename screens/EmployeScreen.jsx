@@ -59,6 +59,10 @@ const EmployeScreen = () => {
         if (!itemsData) {
           return []; 
         }
+        
+       if (!searchQuery) {
+        return items; // Return all items if searchQuery is null
+      }
       
         return itemsData.filter(item =>
           item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||

@@ -12,6 +12,7 @@ const DepensesScreen = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentAudio, setCurrentAudio] = useState(null);
+  const [searchQuery ,setSearchQuery] = useState(null);
 
 
   useEffect(() => {
@@ -37,6 +38,27 @@ const DepensesScreen = () => {
     return () => unsubscribe();
   },[]);    
 
+
+  const handleSearch = (query) =>{
+    setSearchQuery(query);
+  }
+
+  const filteredItems = () => {
+    if (!items) {
+      return []; 
+    }
+  
+    if (!searchQuery) {
+      return items; 
+    }
+  
+    return items.filter(item =>
+      item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.spends.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.dateAdded.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  };
+  
   const openImageModal = (imageUri) => {
     setSelectedImage(imageUri);
   };
@@ -109,9 +131,9 @@ const DepensesScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Header title={"Dépenses"} />
+      <Header title={"Dépenses"} onSearching={handleSearch}/>
       <FlatList
-        data={items}
+        data={filteredItems()}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         numColumns={2}
