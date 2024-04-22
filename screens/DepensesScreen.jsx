@@ -8,16 +8,15 @@ import Sound from "react-native-sound";
 
 const DepensesScreen = () => {
   const [items, setItems] = useState([]);
-  const [audioItems , setAudioItems] = useState([]);
-  const [imageItems , setImageItems] = useState([]);
   const [isModalSpendsOpen, setIsModalSpendsOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentAudio, setCurrentAudio] = useState(null);
+
 
   useEffect(() => {
     const unsubscribe = firestore().collection('DepensesCollection').onSnapshot(snapshot => {
       const fetchedItems = [];
-      const audioItems = []; 
-      const imageItems = [];
       snapshot.forEach(documentSnapshot => {
         const data = documentSnapshot.data();
         const item = {
@@ -27,11 +26,6 @@ const DepensesScreen = () => {
           isAudioPlaying: false,
         };
         fetchedItems.push(item);
-        if (data.thumbnailType === 'audio') {
-          audioItems.push(item);
-        } else {
-          imageItems.push(item);
-        }
       });
       fetchedItems.sort((a, b) => b.timestamp - a.timestamp);
       setItems(fetchedItems);
@@ -54,8 +48,10 @@ const DepensesScreen = () => {
   const renderItem = ({ item }) => {
     if (item.thumbnailType === 'audio') {
       return (
-        <TouchableOpacity style={styles.itemContainer} onPress={() => openAudioPlayer(item.thumbnail)}>
-          <Icon name="play-circle" size={50} color="black" />
+        <TouchableOpacity style={styles.itemContainer} onPress={()=>handleAudioPress(item)}>
+          <Text>
+            <Icon name={isPlaying ? "pause-circle" : "play-circle"} size={50} color="black" />
+          </Text>
           <Text style={styles.description}>{item.description}</Text>
           <Text style={styles.spends}><Text style={{ fontWeight: "bold" }}>-</Text>{item.spends} MAD</Text>
           <Text style={styles.dateAdded}>{item.dateAdded}</Text>
@@ -73,14 +69,32 @@ const DepensesScreen = () => {
     }
   };
   
+
+  const handleAudioPress = (item) => {
+    if (currentAudio) {
+      if (isPlaying) {
+        currentAudio.pause(); 
+      } else {
+        currentAudio.play(); 
+      }
+      setIsPlaying(!isPlaying); 
+    } else {
+      openAudioPlayer(item.thumbnail);
+      setIsPlaying(true);
+    }
+  };
+  
+  
+
   const openAudioPlayer = (audioUri) => {
-    const sound = new Sound(audioUri, null, (error) => {
+    const sound = new Sound(audioUri, '', (error) => {
+      setCurrentAudio(sound);
       if (error) {
         console.log('Error loading sound:', error);
       } else {
-        console.log('Loaded sound:', sound);
         sound.play((success) => {
           if (success) {
+            setIsPlaying(false);
             console.log('Sound played successfully');
           } else {
             console.log('Playback failed due to audio decoding errors');
@@ -90,6 +104,8 @@ const DepensesScreen = () => {
     });
   };
   
+  
+
 
   return (
     <View style={styles.container}>
