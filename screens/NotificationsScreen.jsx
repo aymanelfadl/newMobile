@@ -45,7 +45,7 @@ const NotificationsScreen = () => {
 
     const renderMessageItem = ({ item }) => (
         <View style={styles.messageContainer}>
-            <Text style={{ color: "black",fontWeight:"200", fontSize: 20}}>{item.operation + " " + formatDate(item.timestamp)}</Text>
+            <Text style={{ color: "black",fontWeight:"200", fontSize: 20}}>{item.operation + " " + formatDate(item.timestamp) }</Text>
         </View>
     );
 

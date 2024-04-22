@@ -241,8 +241,9 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
 
       await firestore().collection('changeLogs').add({
         Id: depenseRef.id,
-        operation: `Un nouvel depense, "${finalDescription}", a été ajouté`,
+        operation: `Un nouvel depense, ${finalDescription} de ${spends} MAD a été ajouté`,
         type: "Add",
+        newSpends: spends,
         timestamp: new Date(),
       });
 
