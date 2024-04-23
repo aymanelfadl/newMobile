@@ -42,7 +42,7 @@ const ShowAnalyse = ({ total, totalEmp, totalDepense, totalRevenu }) => {
           </Text>
           <View style={[styles.line,{ backgroundColor: item.title === "Solde Total" ? "black" : (item.description > 0 ? "green" : "rgb(244 63 94)")}]} />
         </View>
-        <View style={[styles.itemContainer, { backgroundColor: item.title === "Solde Total" ? "black" : (item.description > 0 ? "green" : "rgb(244 63 94)"), padding : item.title==="Solde Total" ? 15 : 8 }]}>
+        <View style={[styles.itemContainer, { backgroundColor: item.title === "Solde Total" ? "black" : (item.description > 0 ? "green" : "rgb(244 63 94)"), padding : item.title==="Solde Total" ? 15 : 0 }]}>
           <View style={styles.iconContainer}>
             {item.icon && <Image source={item.icon} style={styles.icon} />}
           </View>
@@ -75,7 +75,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 4,
     elevation: 6,
-    padding: 8,
     width: "80%",
   },
   titleContainer: {
@@ -83,18 +82,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf:"center",
     width:"90%",
+    marginBottom:8
   },
   title: {
     fontSize: 18,
     fontWeight: "600",
-    marginRight: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     paddingVertical: 10,
-    alignSelf: "center"
   },
   line: {
     flex: 1,
-    height: 2,
+    height: 1,
   },
   iconContainer: {
     marginRight: 10,
