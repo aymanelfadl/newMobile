@@ -49,42 +49,55 @@ const AddSpendModalEmploye = ({ visible, employee, onClose }) => {
     }
     
     const handleSpendAmount = async () => {
-        setIsUploading(true)
+        setIsUploading(true);
         onClose();
         try {
             setUploadProgress(0);
             const employeeDoc = await firestore().collection('EmployesCollection').doc(employee.id).get();
-            const currentSpends = employeeDoc.data().spends ;
-            const spendsToAdd = Number(spends) ;
-            let totalSpends ;  
-
+            const currentSpends = employeeDoc.data().spends;
+            const spendsToAdd = Number(spends);
+    
             const formattedDate = formatDate(selectedDate);
-
+    
             setUploadProgress(0.5);
-            isNaN(spendsToAdd) ? totalSpends = currentSpends : totalSpends = spendsToAdd + currentSpends ; 
+
+            let totalSpends = isNaN(spendsToAdd) ? currentSpends : spendsToAdd + currentSpends;
+    
+            
             await firestore().collection('EmployesCollection').doc(employee.id).update({
                 spends: totalSpends,
                 dateAdded: formattedDate,
                 timestamp: new Date(),
             });
     
+
+            const spendModificationRef = await firestore().collection('EmployesCollection').doc(employee.id).collection('SpendModifications').add({
+                spends: spendsToAdd, 
+                dateAdded: formattedDate,
+                timestamp: new Date(),
+            });
+    
+
             const logData = {
                 Id: employee.id,
-                type:"Update",
+                type: "Update",
                 operation: "Les dépenses de l'employé " + employee.description + " ont été mises à jour, il a pris " + spendsToAdd,
-                timestamp: new Date(),
+                timestamp: selectedDate,
                 newSpends: spendsToAdd,
+                spendModificationId: spendModificationRef.id, 
             };
             await firestore().collection('changeLogs').add(logData);
+    
             setUploadProgress(1);
             setSpends("");
             setSelectedDate(new Date());
             setIsUploading(false);
+            onClose();
         } catch (error) {
             console.error('Error updating spends:', error);
         }
     }
-
+    
     const DateModal = () =>{
         return (
               <DatePicker

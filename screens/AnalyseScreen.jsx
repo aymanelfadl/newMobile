@@ -41,19 +41,21 @@ const AnalyseScreen = () => {
   };
   
   const getTotalEmployes = () => {
-    const unsubscribe = firestore().collection('changeLogs').where("timestamp", "<=", selectedDate).onSnapshot(snapshot => {
-      let totalEmployes = 0;
-      snapshot.forEach(log => {
-        if (log.data().type === "Update" && typeof log.data().newSpends === "number") {
-          totalEmployes -= log.data().newSpends;
-        }
-      });
-      setTotalDepenseEmp(totalEmployes);
+    const unsubscribe = firestore().collection('EmployesCollection').onSnapshot(querySnapshot => {
+        let totalEmployes = 0;
+        querySnapshot.forEach(async employeeDoc => {
+            const spendSnapshot = await employeeDoc.ref.collection('SpendModifications').where("timestamp", "<=", selectedDate).get();
+            spendSnapshot.forEach(doc => {
+                totalEmployes -= doc.data().spends;
+            });
+            setTotalDepenseEmp(totalEmployes);
+        });
     });
-  
     return unsubscribe;
-  };
-  
+};
+
+
+
   useEffect(() => {
     const fetchInitialData = async () => {
         await Promise.all([getTotalDepenses(), getTotalRevenus(), getTotalEmployes()]);
