@@ -1,11 +1,9 @@
-import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const Header = ({ title, onSearching, MyIcon }) => {
+const Header = ({ title, onSearching, MyIcon , onIconPress}) => {
 
-  const navigation = useNavigation();
   const [openSearch, setOpenSearch] = useState(false);
   
   return (
@@ -13,7 +11,7 @@ const Header = ({ title, onSearching, MyIcon }) => {
       {MyIcon ? (
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{title}</Text>
-          <TouchableOpacity  style={{ paddingLeft: 6 }} onPress={()=> navigation.navigate("Notifications")}>
+          <TouchableOpacity  style={{ paddingLeft: 6 }} onPress={onIconPress}>
             <Icon name={MyIcon} size={30} color="crimson" />
           </TouchableOpacity>
         </View>

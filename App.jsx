@@ -9,6 +9,7 @@ import RevenuScreen from './screens/RevenuScreen';
 import EmployeScreen from './screens/EmployeScreen';
 import AnalyseScreen from './screens/AnalyseScreen';
 import NotificationsScreen from './screens/NotificationsScreen';
+import ExchangeScreen from './screens/ExchangeScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator(); 
@@ -87,7 +88,17 @@ const App = () => {
                 headerTitleStyle: {
                   color: 'crimson'
                 },
-                headerTintColor: 'crimson' 
+                headerTintColor: 'crimson'
+              }}
+            />
+            <Stack.Screen
+              name="Exchange"
+              component={ExchangeScreen}
+              options={{
+                headerTitleStyle:{
+                  color:"crimson"
+                },
+                headerTintColor:"crimson"
               }}
             />
           </Stack.Navigator>

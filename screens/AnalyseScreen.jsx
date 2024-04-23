@@ -1,11 +1,14 @@
 import React, { useState, useEffect, cloneElement } from "react";
 import { View, StyleSheet } from "react-native";
 import firestore from "@react-native-firebase/firestore";
-
+import { useNavigation } from "@react-navigation/native"
 import Header from "../components/Header";
 import ShowAnalyse from "../components/ShowAnalyse";
 
 const AnalyseScreen = () => {
+
+  const navigation = useNavigation();
+
   const [totalDepense, setTotalDepense] = useState(0);
   const [totalTRevenu, setTotalRevenu] = useState(0);
   const [totaleDepenseEmp, setTotalDepenseEmp] = useState(0);
@@ -39,7 +42,6 @@ const AnalyseScreen = () => {
       let totalEmployes = 0;
       snapshot.forEach(log => {
         if (log.data().type === "Update" && typeof log.data().newSpends === "number") {
-
           totalEmployes -= log.data().newSpends;
         }
       });
@@ -58,7 +60,7 @@ const AnalyseScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Header title={"Analyse"} />
+      <Header title={"Analyse"} MyIcon={"plus"} onIconPress={()=>navigation.navigate("Exchange")}/>
       <ShowAnalyse total={totalDepense + totalTRevenu + totaleDepenseEmp} totalDepense={totalDepense} totalRevenu={totalTRevenu} totalEmp={totaleDepenseEmp} />
     </View>
   );

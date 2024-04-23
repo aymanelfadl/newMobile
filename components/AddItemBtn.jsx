@@ -48,7 +48,7 @@ const AddItemBtn = () => {
   
   return (
     <View style={styles.mainContainer}>
-      <Header title={"Accueil"} MyIcon={notificationIconName} />
+      <Header title={"Accueil"} MyIcon={notificationIconName} onIconPress={()=> {navigation.navigate("Notifications")}}/>
       {renderButtons()}
       <AddSpendModalDepenses visible={openDepenseModal} onClose={() =>{setOpenDepenseModal(false)}} />
       <AddSpendModalRevenu visible={openRevenuModal} onClose={() =>{setOpenRevenuModal(false)}} />      
