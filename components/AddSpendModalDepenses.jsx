@@ -232,7 +232,7 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
         description: finalDescription,
         thumbnail: mediaUrl,
         thumbnailType: uploadType === null ? "image" : uploadType,
-        spends: spends,
+        spends: spends === '' ? 0 : spends,
         dateAdded: formatDate(new Date()),
         timestamp: new Date(),
       });
@@ -251,6 +251,7 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
       setAudioFile(null),
       setIsAudioPlaying(null);
       setThumbnail(null);
+      setUploadType(null);
       setDescription("");
       setSpends("");
 

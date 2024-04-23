@@ -55,7 +55,7 @@ const AddSpendModalEmploye = ({ visible, employee, onClose }) => {
             setUploadProgress(0);
             const employeeDoc = await firestore().collection('EmployesCollection').doc(employee.id).get();
             const currentSpends = employeeDoc.data().spends ;
-            const spendsToAdd = parseFloat(spends) ;
+            const spendsToAdd = Number(spends) ;
             let totalSpends ;  
 
             const formattedDate = formatDate(selectedDate);

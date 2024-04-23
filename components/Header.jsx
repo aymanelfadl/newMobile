@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const Header = ({ title, onSearching, MyIcon , onIconPress}) => {
+const Header = ({ title, onSearching, MyIcon , onIconPress , dateSelcted}) => {
 
   const [openSearch, setOpenSearch] = useState(false);
   
@@ -11,6 +11,13 @@ const Header = ({ title, onSearching, MyIcon , onIconPress}) => {
       {MyIcon ? (
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{title}</Text>
+            {dateSelcted && (
+              <View style={styles.dateContainer}>
+                <Text style={{color:"white",fontSize:12,}}>
+                  {dateSelcted}
+                </Text>
+              </View>
+            )}
           <TouchableOpacity  style={{ paddingLeft: 6 }} onPress={onIconPress}>
             <Icon name={MyIcon} size={30} color="crimson" />
           </TouchableOpacity>
@@ -23,7 +30,7 @@ const Header = ({ title, onSearching, MyIcon , onIconPress}) => {
           </TouchableOpacity>
         </View>
       )}
-
+      
       {openSearch && (
         <View style={styles.searchContainer}>
           <TextInput
@@ -62,6 +69,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 15,
     marginLeft: 15,
+  },
+  dateContainer:{
+    justifyContent:"center",
+    padding: 4,
+    borderRadius:100,
+    paddingHorizontal:18,
+    backgroundColor:"crimson" 
   },
   title: {
     fontSize: 20,

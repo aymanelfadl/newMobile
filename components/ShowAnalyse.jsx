@@ -5,7 +5,7 @@ import IncomeIcon from "../assets/passive-income.png";
 import EmployeeExpenseIcon from "../assets/career.png";
 import DepenseIcon from "../assets/depenser-de-largent.png"
 
-const ShowAnalyse = ({ total, totalEmp, totalDepense, totalRevenu }) => {
+const ShowAnalyse = ({ total, totalEmp, totalDepense, totalRevenu, dateSelcted }) => {
   
   const renderLabels = () => {
     const labels = [
@@ -52,7 +52,9 @@ const ShowAnalyse = ({ total, totalEmp, totalDepense, totalRevenu }) => {
     ));
   };
 
-  return <View style={styles.mainContainer}>{renderLabels()}</View>;
+  return( <View style={styles.mainContainer}>
+    {renderLabels()}
+    </View>);
 };
 
 const styles = StyleSheet.create({

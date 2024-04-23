@@ -232,7 +232,7 @@ const AddSpendModalRevenu = ({ visible, onClose }) => {
         description: finalDescription,
         thumbnail: mediaUrl,
         thumbnailType: uploadType === null ? "image" : uploadType,
-        spends: spends,
+        spends: spends === '' ? 0 : spends,
         dateAdded: formatDate(new Date()),
         timestamp: new Date(),
       });
