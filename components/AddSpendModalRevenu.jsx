@@ -242,7 +242,7 @@ const AddSpendModalRevenu = ({ visible, onClose }) => {
       await firestore().collection('changeLogs').add({
         Id: depenseRef.id,
         operation: `Un nouveau revenu, ${finalDescription} de ${spends} MAD a été ajouté`,
-        type: "Add",
+        type: "Revenu",
         timestamp: new Date(),
       });
 

@@ -80,7 +80,7 @@ const AddSpendModalEmploye = ({ visible, employee, onClose }) => {
 
             const logData = {
                 Id: employee.id,
-                type: "Update",
+                type: "Employe",
                 operation: "Les dépenses de l'employé " + employee.description + " ont été mises à jour, il a pris " + spendsToAdd,
                 timestamp: selectedDate,
                 newSpends: spendsToAdd,
