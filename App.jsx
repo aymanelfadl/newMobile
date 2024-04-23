@@ -1,4 +1,3 @@
-import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -72,25 +71,27 @@ const TabNavigator = () => (
 const App = () => {
   return (
     <GestureHandlerRootView>
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="TabNavigator" 
-          component={TabNavigator} 
-          options={{ headerShown: false }} 
-        />
-        <Stack.Screen
-          name="Notifications" 
-          component={NotificationsScreen}  
-          options={{
-            headerTitleStyle: {
-                color: 'crimson'
-            },
-            headerTintColor: 'crimson' 
-        }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="TabNavigator" 
+              component={TabNavigator} 
+              options={{ 
+                headerShown: false, 
+              }} 
+            />
+            <Stack.Screen
+              name="Notifications" 
+              component={NotificationsScreen}  
+              options={{
+                headerTitleStyle: {
+                  color: 'crimson'
+                },
+                headerTintColor: 'crimson' 
+              }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
     </GestureHandlerRootView>
   );
 };

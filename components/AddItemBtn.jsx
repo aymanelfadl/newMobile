@@ -1,19 +1,23 @@
-import React, { useState } from "react";
+import React, {useState } from "react";
 import { TouchableOpacity, View, StyleSheet, Image, Text } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Header from "./Header";
-
 import ExpenseIcon from "../assets/expenses.png";
 import IncomeIcon from "../assets/income.png";
 import EmployeeExpenseIcon from "../assets/recruitment.png";
 import AddSpendModalDepenses from "./AddSpendModalDepenses";
 import AddSpendModalRevenu from "./AddSpendModalRevenu";
 
+
 const AddItemBtn = () => {
 
   const [openDepenseModal, setOpenDepenseModal]= useState(false);
   const [openRevenuModal, setOpenRevenuModal]= useState(false);
+  
+  const notificationIconName =  'bell-badge-outline';
+
   const navigation = useNavigation(); 
+
 
   const DataBtns = [
     { title:"Nouvelle Dépense", description: "Enregistrer une nouvelle dépense", onPress: () => setOpenDepenseModal(true), backgroundColor: "rgb(244 63 94)", icon: ExpenseIcon }, // Crimson
@@ -44,7 +48,7 @@ const AddItemBtn = () => {
   
   return (
     <View style={styles.mainContainer}>
-      <Header title={"Accueil"} MyIcon={"bell"} />
+      <Header title={"Accueil"} MyIcon={notificationIconName} />
       {renderButtons()}
       <AddSpendModalDepenses visible={openDepenseModal} onClose={() =>{setOpenDepenseModal(false)}} />
       <AddSpendModalRevenu visible={openRevenuModal} onClose={() =>{setOpenRevenuModal(false)}} />      

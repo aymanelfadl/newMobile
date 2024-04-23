@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 
 const NotificationsScreen = () => {
+
     const [messages, setMessages] = useState([]);
 
     const formatDate = (date) => {
@@ -56,6 +57,7 @@ const NotificationsScreen = () => {
             keyExtractor={(item) => item.id}
             contentContainerStyle={{ paddingVertical: 10 }}
             style={{backgroundColor: "rgb(249 250 251)"}}
+            ListEmptyComponent={<Text style={{color:"black", justifyContent:"center" , alignSelf:"center", color:"gray"}}>Aucun notification trouvé</Text>}
         />
     );
 };

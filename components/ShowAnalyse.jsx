@@ -36,13 +36,13 @@ const ShowAnalyse = ({ total, totalEmp, totalDepense, totalRevenu }) => {
     return labels.map((item, index) => (
       <View key={index} style={styles.labelContainer}>
         <View style={styles.titleContainer}>
-        <View style={[styles.line,{ backgroundColor: item.title === "Solde Total" ? "rgb(75 85 99)" : (item.description > 0 ? "green" : "rgb(244 63 94)")}]} />
-          <Text style={[styles.title,{ color: item.title === "Solde Total" ? "rgb(75 85 99)" : (item.description > 0 ? "green" : "rgb(244 63 94)")}]} >
+        <View style={[styles.line,{ backgroundColor: item.title === "Solde Total" ? "black" : (item.description > 0 ? "green" : "rgb(244 63 94)")}]} />
+          <Text style={[styles.title,{ color: item.title === "Solde Total" ? "black" : (item.description > 0 ? "green" : "rgb(244 63 94)")}]} >
             {item.title}
           </Text>
-          <View style={[styles.line,{ backgroundColor: item.title === "Solde Total" ? "rgb(75 85 99)" : (item.description > 0 ? "green" : "rgb(244 63 94)")}]} />
+          <View style={[styles.line,{ backgroundColor: item.title === "Solde Total" ? "black" : (item.description > 0 ? "green" : "rgb(244 63 94)")}]} />
         </View>
-        <View style={[styles.itemContainer, { backgroundColor: item.title === "Solde Total" ? " rgb(75 85 99)" : (item.description > 0 ? "green" : "rgb(244 63 94)"), padding : item.title==="Solde Total" ? 15 : 8 }]}>
+        <View style={[styles.itemContainer, { backgroundColor: item.title === "Solde Total" ? "black" : (item.description > 0 ? "green" : "rgb(244 63 94)"), padding : item.title==="Solde Total" ? 15 : 8 }]}>
           <View style={styles.iconContainer}>
             {item.icon && <Image source={item.icon} style={styles.icon} />}
           </View>
