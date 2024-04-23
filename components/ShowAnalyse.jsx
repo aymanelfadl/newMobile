@@ -1,7 +1,5 @@
 import React from "react";
 import { View, StyleSheet, Image, Text } from "react-native";
-import Header from "./Header";
-
 import TotalIcon from "../assets/up-and-down-arrows.png";
 import IncomeIcon from "../assets/passive-income.png";
 import EmployeeExpenseIcon from "../assets/career.png";
@@ -36,13 +34,13 @@ const ShowAnalyse = ({ total, totalEmp, totalDepense, totalRevenu }) => {
     return labels.map((item, index) => (
       <View key={index} style={styles.labelContainer}>
         <View style={styles.titleContainer}>
-        <View style={[styles.line,{ backgroundColor: item.title === "Solde Total" ? "black" : (item.description > 0 ? "green" : "rgb(244 63 94)")}]} />
-          <Text style={[styles.title,{ color: item.title === "Solde Total" ? "black" : (item.description > 0 ? "green" : "rgb(244 63 94)")}]} >
+        <View style={[styles.line,{ backgroundColor: item.title === "Solde Total" ? "black" : (item.description > 0 ? "green" : "crimson")}]} />
+          <Text style={[styles.title,{ color: item.title === "Solde Total" ? "black" : (item.description > 0 ? "green" : "crimson")}]} >
             {item.title}
           </Text>
-          <View style={[styles.line,{ backgroundColor: item.title === "Solde Total" ? "black" : (item.description > 0 ? "green" : "rgb(244 63 94)")}]} />
+          <View style={[styles.line,{ backgroundColor: item.title === "Solde Total" ? "black" : (item.description > 0 ? "green" : "crimson")}]} />
         </View>
-        <View style={[styles.itemContainer, { backgroundColor: item.title === "Solde Total" ? "black" : (item.description > 0 ? "green" : "rgb(244 63 94)"), padding : item.title==="Solde Total" ? 15 : 0 }]}>
+        <View style={[styles.itemContainer, { backgroundColor: item.title === "Solde Total" ? "black" : (item.description > 0 ? "green" : "crimson"), padding : item.title==="Solde Total" ? 15 : 0 }]}>
           <View style={styles.iconContainer}>
             {item.icon && <Image source={item.icon} style={styles.icon} />}
           </View>
@@ -97,7 +95,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     marginRight: 10,
     borderRadius: 100,
-    backgroundColor: "rgb(250 250 250)",
+    backgroundColor: "white",
     padding: 10,
   },
   icon: {

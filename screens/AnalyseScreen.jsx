@@ -1,9 +1,11 @@
-import React, { useState, useEffect, cloneElement } from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text,StyleSheet, TouchableOpacity, Modal } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import { useNavigation } from "@react-navigation/native"
 import Header from "../components/Header";
 import ShowAnalyse from "../components/ShowAnalyse";
+import Icon from "react-native-vector-icons/EvilIcons";
+import DatePicker from 'react-native-date-picker';
 
 const AnalyseScreen = () => {
 
@@ -12,6 +14,8 @@ const AnalyseScreen = () => {
   const [totalDepense, setTotalDepense] = useState(0);
   const [totalTRevenu, setTotalRevenu] = useState(0);
   const [totaleDepenseEmp, setTotalDepenseEmp] = useState(0);
+  const [isDateModalOpen, setIsDateModalOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date()); 
     
   const getTotalDepenses = () => {
     const unsubscribe = firestore().collection('DepensesCollection').onSnapshot(snapshot => {
@@ -58,10 +62,36 @@ const AnalyseScreen = () => {
   }, []); 
 
 
+  
+  const DateModal = () =>{
+    return (
+          <DatePicker
+            modal
+            mode='date'
+            them="light"
+            open={isDateModalOpen}
+            date={selectedDate}
+            onConfirm={(selectedDate) => {
+              setIsDateModalOpen(false)
+              setSelectedDate(selectedDate)
+            }}
+            onCancel={() => {
+              setIsDateModalOpen(false)
+            }}
+          />
+      )
+}
+
+
   return (
     <View style={styles.container}>
       <Header title={"Analyse"} MyIcon={"plus"} onIconPress={()=>navigation.navigate("Exchange")}/>
       <ShowAnalyse total={totalDepense + totalTRevenu + totaleDepenseEmp} totalDepense={totalDepense} totalRevenu={totalTRevenu} totalEmp={totaleDepenseEmp} />
+      
+      <TouchableOpacity style={styles.button} onPress={()=>setIsDateModalOpen(true)}>
+          <Text><Icon name="calendar" size={45} color="white" /></Text>
+      </TouchableOpacity>
+      <DateModal />
     </View>
   );
 }
@@ -72,6 +102,18 @@ const styles = StyleSheet.create({
     position: 'relative',
     margin: 0,
     backgroundColor:"white"
+  },
+  button: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: 'crimson',
+    width: 60,
+    height: 60,
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation : 5
   },
 });
 
