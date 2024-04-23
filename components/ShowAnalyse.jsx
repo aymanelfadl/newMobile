@@ -32,7 +32,7 @@ const ShowAnalyse = ({ total, totalEmp, totalDepense, totalRevenu }) => {
       ];
       
     return labels.map((item, index) => (
-      <View key={index} style={styles.labelContainer}>
+      <View key={index} style={{marginVertical:18}}>
         <View style={styles.titleContainer}>
         <View style={[styles.line,{ backgroundColor: item.title === "Solde Total" ? "black" : (item.description > 0 ? "green" : "crimson")}]} />
           <Text style={[styles.title,{ color: item.title === "Solde Total" ? "black" : (item.description > 0 ? "green" : "crimson")}]} >
@@ -56,9 +56,6 @@ const ShowAnalyse = ({ total, totalEmp, totalDepense, totalRevenu }) => {
 };
 
 const styles = StyleSheet.create({
-  labelContainer: {
-    marginBottom: 20,
-  },
   itemContainer: {
     borderRadius: 40,
     borderColor: "#ccc",
@@ -85,8 +82,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "600",
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingHorizontal: 20,
   },
   line: {
     flex: 1,
@@ -96,7 +92,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     borderRadius: 100,
     backgroundColor: "white",
-    padding: 10,
+    padding: 8,
   },
   icon: {
     width: 40,
@@ -114,7 +110,6 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
   },
 });
