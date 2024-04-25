@@ -10,8 +10,7 @@ import EmployeScreen from './screens/EmployeScreen';
 import AnalyseScreen from './screens/AnalyseScreen';
 import NotificationsScreen from './screens/NotificationsScreen';
 import ExchangeScreen from './screens/ExchangeScreen';
-
-import { useEffect } from 'react';
+import SplashScreen from './screens/SplashScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator(); 
@@ -76,7 +75,8 @@ const App = () => {
   return (
     <GestureHandlerRootView>
         <NavigationContainer>
-          <Stack.Navigator>
+          <Stack.Navigator initialRouteName="Splash">
+          <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
             <Stack.Screen
               name="TabNavigator" 
               component={TabNavigator} 
