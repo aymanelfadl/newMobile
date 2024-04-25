@@ -11,7 +11,6 @@ import AnalyseScreen from './screens/AnalyseScreen';
 import NotificationsScreen from './screens/NotificationsScreen';
 import ExchangeScreen from './screens/ExchangeScreen';
 
-import messaging from '@react-native-firebase/messaging';
 import { useEffect } from 'react';
 
 const Tab = createBottomTabNavigator();
@@ -73,28 +72,6 @@ const TabNavigator = () => (
 );
 
 const App = () => {
-
-  async function requestUserPermission() {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-  
-    if (enabled) {
-      console.log('Authorization status:', authStatus);
-    }
-  }
-
-  const getToken = async () =>{
-    const token = await messaging().getToken()
-    console.log("token is  : " + token );
-  } 
-
-
-  useEffect(()=>{
-    requestUserPermission();
-    getToken();
-  },[]);
 
   return (
     <GestureHandlerRootView>

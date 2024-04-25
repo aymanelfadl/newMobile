@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Modal, Button } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header";
 import ShowAnalyse from "../components/ShowAnalyse";
 import Icon from "react-native-vector-icons/EvilIcons";
-import DatePicker from 'react-native-date-picker';
+import DatePicker from 'react-native-modern-datepicker';
 
 const AnalyseScreen = () => {
   const navigation = useNavigation();
@@ -52,9 +52,7 @@ const AnalyseScreen = () => {
         });
     });
     return unsubscribe;
-};
-
-
+  };
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -63,37 +61,25 @@ const AnalyseScreen = () => {
 
     fetchInitialData();
   }, [selectedDate]); 
- 
-  const DateModal = () =>{
-    return (
-      <DatePicker
-        modal
-        mode='date'
-        them="light"
-        open={isDateModalOpen}
-        date={selectedDate}
-        onConfirm={(selectedDate) => {
-          setIsDateModalOpen(false)
-          setSelectedDate(selectedDate)
-        }}
-        onCancel={() => {
-          setIsDateModalOpen(false)
-        }}
-      />
-    )
-  }
 
+  const handleCancelModal = () => {
+    setSelectedDate(new Date());
+    setIsDateModalOpen(false);
+  };
+
+  const formatDate = (date) => {
+    if (!(date instanceof Date) || isNaN(date)) {
+      return '';
+    }
   
-  const formatDate = (date) =>{
-    const currentDate = date;
-        const day = currentDate.getDate().toString().padStart(2, '0');
-        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-        const year = currentDate.getFullYear().toString();
-        return `${day}/${month}/${year}`;
-}
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
   return (
     <View style={styles.container}>
-      <Header title={"Analyse"} MyIcon={"plus"} dateSelcted={formatDate(selectedDate)} onIconPress={()=>navigation.navigate("Exchange")}/>
+      <Header title={"Analyse"} MyIcon={"plus"} dateSelcted={selectedDate} onIconPress={()=>navigation.navigate("Exchange")}/>
       <ShowAnalyse 
         total={Number(totalDepense + totalRevenu + totalDepenseEmp)}
         totalDepense={totalDepense}
@@ -104,7 +90,31 @@ const AnalyseScreen = () => {
       <TouchableOpacity style={styles.button} onPress={()=>setIsDateModalOpen(true)}>
         <Text><Icon name="calendar" size={45} color="white" /></Text>
       </TouchableOpacity>
-      <DateModal />
+
+      <Modal visible={isDateModalOpen} animationType="slide" transparent={true}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <DatePicker
+              mode="calendar"
+              current={formatDate(new Date())} 
+              selected={formatDate(selectedDate)}
+              onSelectedChange={date => setSelectedDate(date)} 
+              options={{
+                mainColor: 'crimson', 
+              }}
+            />
+            <View style={styles.modalButtons}>
+              <TouchableOpacity onPress={() => setIsDateModalOpen(false)} style={[styles.buttonModal, styles.confirmButton]}>
+                <Text style={styles.buttonText}>Confirm</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleCancelModal} style={[styles.buttonModal, styles.cancelButton]}>
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
     </View>
   );
 }
@@ -127,6 +137,55 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     elevation : 5
+  },
+  buttonModal: {
+    width: '45%',
+    borderRadius: 5,
+    paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  calendarButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: 'crimson',
+    width: 60,
+    height: 60,
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    width: "80%",
+    elevation: 5,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+    paddingHorizontal: 20
+  },
+  confirmButton: {
+    backgroundColor: 'rgb(14, 165, 233)',
+  },
+  cancelButton: {
+    backgroundColor: 'crimson',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

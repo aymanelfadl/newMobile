@@ -5,7 +5,14 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const Header = ({ title, onSearching, MyIcon , onIconPress , dateSelcted}) => {
 
   const [openSearch, setOpenSearch] = useState(false);
-  
+
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   return (
     <View style={styles.container}>
       {MyIcon ? (
@@ -14,7 +21,7 @@ const Header = ({ title, onSearching, MyIcon , onIconPress , dateSelcted}) => {
             {dateSelcted && (
               <View style={styles.dateContainer}>
                 <Text style={{color:"white",fontSize:12,}}>
-                  {dateSelcted}
+                  {dateSelcted instanceof Date ? formatDate(dateSelcted) : dateSelcted}
                 </Text>
               </View>
             )}
