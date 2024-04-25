@@ -80,7 +80,7 @@ const AnalyseScreen = () => {
   
   return (
     <View style={styles.container}>
-      <Header title={"Analyse"} MyIcon={"plus"} dateSelcted={selectedDate} onIconPress={()=>navigation.navigate("Exchange")}/>
+      <Header title={"Analyse"} MyIcon={"chevron-double-left"} dateSelcted={selectedDate} onIconPress={()=>navigation.navigate("Échange")}/>
       <ShowAnalyse 
         total={Number(totalDepense + totalRevenu + totalDepenseEmp)}
         totalDepense={totalDepense}

@@ -95,7 +95,7 @@ const App = () => {
               }}
             />
             <Stack.Screen
-              name="Exchange"
+              name="Échange"
               component={ExchangeScreen}
               options={{
                 headerTitleStyle:{
