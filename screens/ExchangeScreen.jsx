@@ -13,7 +13,7 @@ const ExchangeScreen = () => {
         const newItem = {
             name: name,
             spend: spend,
-            date: new Date().toLocaleString()
+            date: new Date(),
         };
 
         setItems([newItem, ...items]);
@@ -33,14 +33,21 @@ const ExchangeScreen = () => {
         setDeleteIndex(null);
     };
 
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${day}/${month}/${year}`;
+      }
+
     const renderItems = () => {
         return items.map((item, index) => (
             <TouchableOpacity key={index} onLongPress={() => handleDelete(index)} style={styles.itemContainer}>
-                <View style={styles.iconContainer}>
+                <View style={[styles.iconContainer]}>
                     <Icon name="plus" size={24} color="black" />
                 </View>
                 <View style={styles.itemTextContainer}>
-                    <Text style={{ color: "black", lineHeight: 24 }}>{item.name} a pris {item.spend} MAD le {item.date}</Text>
+                    <Text style={{ fontSize:16 ,color: "black", lineHeight: 24 }}>{item.name} a pris {item.spend} MAD le {formatDate(item.date)}</Text>
                 </View>
             </TouchableOpacity>
         ));
@@ -88,7 +95,7 @@ const ExchangeScreen = () => {
             <Text style={styles.modalText}>Confirmer la suppression ?</Text>
             <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
                 <TouchableOpacity
-                    style={{ ...styles.openButton, backgroundColor: "#2196F3" ,}}
+                    style={[styles.openButton,{ backgroundColor: "#2196F3" ,}]}
                     onPress={() => {
                         handleConfirmDelete();
                         setModalVisible(!modalVisible);
@@ -97,7 +104,7 @@ const ExchangeScreen = () => {
                     <Text style={styles.textStyle}>Confirmer</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={{ ...styles.openButton, backgroundColor: "crimson" }}
+                    style={[styles.openButton ,{backgroundColor: "crimson"}]}
                     onPress={() => {
                         setModalVisible(!modalVisible);
                     }}
@@ -171,8 +178,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     iconContainer: {
-        marginRight: 10,
-        color:"black"
+        marginRight:10,
+        color:"black",
     },
     itemTextContainer: {
         flex: 1,
