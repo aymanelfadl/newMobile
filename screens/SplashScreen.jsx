@@ -12,7 +12,7 @@ const SplashScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/recettes-fiscales.png')} style={styles.logo} />
+      <Image source={require('../assets/logologo.png')} style={styles.logo} />
     </View>
   );
 };
@@ -22,11 +22,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: 'crimson',
   },
   logo: {
-    width: 200,
-    height: 200,
+    width: 300,
+    height: 300,
     resizeMode: 'contain',
   },
 });
