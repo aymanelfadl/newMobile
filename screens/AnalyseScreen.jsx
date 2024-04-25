@@ -77,6 +77,7 @@ const AnalyseScreen = () => {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
+  
   return (
     <View style={styles.container}>
       <Header title={"Analyse"} MyIcon={"plus"} dateSelcted={selectedDate} onIconPress={()=>navigation.navigate("Exchange")}/>
