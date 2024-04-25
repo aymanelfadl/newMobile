@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { Text, View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { Text, View, TextInput, TouchableOpacity, StyleSheet , Modal} from "react-native";
 import Icon from "react-native-vector-icons/EvilIcons";
 
 const ExchangeScreen = () => {
     const [name, setName] = useState('');
     const [spend, setSpend] = useState('');
     const [items, setItems] = useState([]);
-
+    const [deleteIndex, setDeleteIndex] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
+    
     const handleAdd = () => {
         const newItem = {
             name: name,
@@ -19,19 +21,31 @@ const ExchangeScreen = () => {
         setName('');
         setSpend('');
     };
+    const handleDelete = (index) => {
+        setDeleteIndex(index);
+        setModalVisible(true);
+    };
+    
+    const handleConfirmDelete = () => {
+        const updatedItems = [...items];
+        updatedItems.splice(deleteIndex, 1);
+        setItems(updatedItems);
+        setDeleteIndex(null);
+    };
 
     const renderItems = () => {
         return items.map((item, index) => (
-            <View key={index} style={styles.itemContainer}>
+            <TouchableOpacity key={index} onLongPress={() => handleDelete(index)} style={styles.itemContainer}>
                 <View style={styles.iconContainer}>
                     <Icon name="plus" size={24} color="black" />
                 </View>
                 <View style={styles.itemTextContainer}>
-                    <Text style={{color:"black", lineHeight:24}}>{item.name} a pris {item.spend} MAD le {item.date}</Text>
+                    <Text style={{ color: "black", lineHeight: 24 }}>{item.name} a pris {item.spend} MAD le {item.date}</Text>
                 </View>
-            </View>
+            </TouchableOpacity>
         ));
     };
+    
     
     return (
         <View style={styles.mainContainer}>
@@ -61,6 +75,40 @@ const ExchangeScreen = () => {
             <View style={styles.itemsContainer}>
                 {renderItems()}
             </View>
+            <Modal
+    animationType="slide"
+    transparent={true}
+    visible={modalVisible}
+    onRequestClose={() => {
+        setModalVisible(!modalVisible);
+    }}
+>
+    <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+            <Text style={styles.modalText}>Confirmer la suppression ?</Text>
+            <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+                <TouchableOpacity
+                    style={{ ...styles.openButton, backgroundColor: "#2196F3" ,}}
+                    onPress={() => {
+                        handleConfirmDelete();
+                        setModalVisible(!modalVisible);
+                    }}
+                >
+                    <Text style={styles.textStyle}>Confirmer</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={{ ...styles.openButton, backgroundColor: "crimson" }}
+                    onPress={() => {
+                        setModalVisible(!modalVisible);
+                    }}
+                >
+                    <Text style={styles.textStyle}>Annuler</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    </View>
+</Modal>
+
         </View>
     );
 }
@@ -128,6 +176,45 @@ const styles = StyleSheet.create({
     },
     itemTextContainer: {
         flex: 1,
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22,
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    openButton: {
+        backgroundColor: "#F194FF",
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+        margin: 10,
+    },
+    textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center",
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: "center",
+        color:"black",
+        fontWeight:"600",
     },
 });
 
