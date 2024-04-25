@@ -106,10 +106,10 @@ const AnalyseScreen = () => {
             />
             <View style={styles.modalButtons}>
               <TouchableOpacity onPress={() => setIsDateModalOpen(false)} style={[styles.buttonModal, styles.confirmButton]}>
-                <Text style={styles.buttonText}>Confirm</Text>
+                <Text style={styles.buttonText}>Confirmer</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleCancelModal} style={[styles.buttonModal, styles.cancelButton]}>
-                <Text style={styles.buttonText}>Cancel</Text>
+                <Text style={styles.buttonText}>Annuler</Text>
               </TouchableOpacity>
             </View>
           </View>

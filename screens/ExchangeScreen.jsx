@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Text, View, TextInput, TouchableOpacity, StyleSheet , Modal} from "react-native";
 import Icon from "react-native-vector-icons/EvilIcons";
+import firestore from "@react-native-firebase/firestore"
 
 const ExchangeScreen = () => {
     const [name, setName] = useState('');
@@ -9,29 +10,59 @@ const ExchangeScreen = () => {
     const [deleteIndex, setDeleteIndex] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     
-    const handleAdd = () => {
+    useEffect(() => {
+        const unsubscribe = firestore().collection("ExchangeCollection")
+            .onSnapshot((querySnapshot) => {
+                const itemsArray = [];
+                querySnapshot.forEach((doc) => {
+                    itemsArray.push({
+                        id: doc.id,
+                        name: doc.data().name,
+                        spend: doc.data().spend,
+                        date: doc.data().date.toDate(), 
+                    });
+                });
+                setItems(itemsArray);
+            });
+
+        return () => unsubscribe();
+    }, []);
+
+    const handleAdd = async () => {
         const newItem = {
             name: name,
             spend: spend,
             date: new Date(),
         };
 
-        setItems([newItem, ...items]);
-        
-        setName('');
-        setSpend('');
+        try {
+            await firestore().collection("ExchangeCollection").add(newItem);
+
+            setName('');
+            setSpend('');
+        } catch (error) {
+            console.error("Error adding document: ", error);
+        }
     };
+    
+
     const handleDelete = (index) => {
         setDeleteIndex(index);
         setModalVisible(true);
     };
     
-    const handleConfirmDelete = () => {
+const handleConfirmDelete = async () => {
+    try {
+        await firestore().collection("ExchangeCollection").doc(items[deleteIndex].id).delete();
+
         const updatedItems = [...items];
         updatedItems.splice(deleteIndex, 1);
         setItems(updatedItems);
         setDeleteIndex(null);
-    };
+    } catch (error) {
+        console.error("Error deleting document: ", error);
+    }
+};
 
     const formatDate = (date) => {
         const year = date.getFullYear();
@@ -47,7 +78,7 @@ const ExchangeScreen = () => {
                     <Icon name="plus" size={24} color="black" />
                 </View>
                 <View style={styles.itemTextContainer}>
-                    <Text style={{ fontSize:16 ,color: "black", lineHeight: 24 }}>{item.name} a pris {item.spend} MAD le {formatDate(item.date)}</Text>
+                    <Text style={{ fontSize:16 ,color: "black", lineHeight: 24 }}>{item.name} m'a pris {item.spend} MAD le {formatDate(item.date)}.</Text>
                 </View>
             </TouchableOpacity>
         ));
@@ -79,42 +110,43 @@ const ExchangeScreen = () => {
                     <Text style={styles.addButtonText}>Ajouter</Text>
                 </TouchableOpacity>
             </View>
+            <View style={{backgroundColor:"crimson" ,height:1, width:"100%", }}></View>
             <View style={styles.itemsContainer}>
                 {renderItems()}
             </View>
             <Modal
-    animationType="slide"
-    transparent={true}
-    visible={modalVisible}
-    onRequestClose={() => {
-        setModalVisible(!modalVisible);
-    }}
->
-    <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-            <Text style={styles.modalText}>Confirmer la suppression ?</Text>
-            <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                <TouchableOpacity
-                    style={[styles.openButton,{ backgroundColor: "#2196F3" ,}]}
-                    onPress={() => {
-                        handleConfirmDelete();
-                        setModalVisible(!modalVisible);
-                    }}
-                >
-                    <Text style={styles.textStyle}>Confirmer</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.openButton ,{backgroundColor: "crimson"}]}
-                    onPress={() => {
-                        setModalVisible(!modalVisible);
-                    }}
-                >
-                    <Text style={styles.textStyle}>Annuler</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
-    </View>
-</Modal>
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                }}
+            >
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalText}>Confirmer la suppression ?</Text>
+                        <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+                        <TouchableOpacity
+                                style={[styles.openButton,{ backgroundColor: "#2196F3" ,}]}
+                                onPress={() => {
+                                    handleConfirmDelete();
+                                    setModalVisible(!modalVisible);
+                                }}
+                            >
+                                <Text style={styles.textStyle}>Confirmer</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.openButton ,{backgroundColor: "crimson"}]}
+                                onPress={() => {
+                                    setModalVisible(!modalVisible);
+                                }}
+                            >
+                                <Text style={styles.textStyle}>Annuler</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal> 
 
         </View>
     );
@@ -131,9 +163,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 20,
-        borderWidth:1,
+        borderWidth:0.5,
         padding:18,
-        borderRadius:100,
+        borderRadius:30,
         borderColor:"crimson"
     },
     input: {
@@ -156,6 +188,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
         fontSize: 18,
+        marginHorizontal:8
     },
     itemsContainer: {
         marginTop: 20,
