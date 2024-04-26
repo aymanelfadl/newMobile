@@ -71,18 +71,14 @@ const AnalyseScreen = () => {
         querySnapshot.forEach(async employeeDoc => {
             let dateObj = new Date(selectedDate);
             dateObj.setUTCHours(23, 59, 59, 999);
-            console.log("Selected Date Object:", dateObj);
-
+            
             const spendSnapshot = await employeeDoc.ref.collection('SpendModifications').get();
             spendSnapshot.forEach(doc => {
                 const docDate = new Date(doc.data().dateAdded);
-                console.log("Document Date Added:", docDate);
                 if (docDate <= dateObj) {
-                    console.log("Adding to total employes:", doc.data().spends);
                     totalEmployes -= doc.data().spends; 
                 }
             });
-            console.log("Total Depense Employe:", totalEmployes);
             setTotalDepenseEmp(totalEmployes);
         });
 
