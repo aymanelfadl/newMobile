@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Modal, Button } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header";
@@ -7,21 +7,41 @@ import ShowAnalyse from "../components/ShowAnalyse";
 import Icon from "react-native-vector-icons/EvilIcons";
 import DatePicker from 'react-native-modern-datepicker';
 
+
+
 const AnalyseScreen = () => {
   const navigation = useNavigation();
+
+  function formatDateToDash(dateString) {
+    const parts = dateString.split('/');
+    const formattedDate = `${parts[0]}-${parts[1]}-${parts[2]}`;
+    
+    return formattedDate;
+  }
+
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   const [totalDepense, setTotalDepense] = useState(0);
   const [totalRevenu, setTotalRevenu] = useState(0);
   const [totalDepenseEmp, setTotalDepenseEmp] = useState(0);
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(formatDate(new Date()));
 
   const getTotalDepenses = () => {
-    const unsubscribe = firestore().collection('DepensesCollection').where("timestamp", "<=", selectedDate).onSnapshot(snapshot => {
+    const dateObj = new Date(selectedDate);
+    console.log(dateObj)
+    console.log(selectedDate);
+    const unsubscribe = firestore().collection('DepensesCollection').where("timestamp", "<=", dateObj).onSnapshot(snapshot => {
       let totalSpends = 0;
       snapshot.forEach(depense => {
         totalSpends -= Number(depense.data().spends); 
       });
+      console.log(totalDepense);
       setTotalDepense(totalSpends);
     });
   
@@ -29,7 +49,7 @@ const AnalyseScreen = () => {
   };
 
   const getTotalRevenus = () => {
-    const unsubscribe = firestore().collection('RevenusCollection').where("timestamp", "<=", selectedDate).onSnapshot(snapshot => {
+    const unsubscribe = firestore().collection('RevenusCollection').where("timestamp", "<=", new Date(selectedDate)).onSnapshot(snapshot => {
       let totalRevenus = 0;
       snapshot.forEach(revenu => {
         totalRevenus += Number(revenu.data().spends);  
@@ -44,7 +64,7 @@ const AnalyseScreen = () => {
     const unsubscribe = firestore().collection('EmployesCollection').onSnapshot(querySnapshot => {
         let totalEmployes = 0;
         querySnapshot.forEach(async employeeDoc => {
-            const spendSnapshot = await employeeDoc.ref.collection('SpendModifications').where("timestamp", "<=", selectedDate).get();
+            const spendSnapshot = await employeeDoc.ref.collection('SpendModifications').where("timestamp", "<=", new Date(selectedDate)).get();
             spendSnapshot.forEach(doc => {
                 totalEmployes -= doc.data().spends;
             });
@@ -63,19 +83,8 @@ const AnalyseScreen = () => {
   }, [selectedDate]); 
 
   const handleCancelModal = () => {
-    setSelectedDate(new Date());
+    setSelectedDate(formatDate(new Date()));
     setIsDateModalOpen(false);
-  };
-
-  const formatDate = (date) => {
-    if (!(date instanceof Date) || isNaN(date)) {
-      return '';
-    }
-  
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
   };
   
   return (
@@ -97,9 +106,9 @@ const AnalyseScreen = () => {
           <View style={styles.modalContent}>
             <DatePicker
               mode="calendar"
-              current={formatDate(new Date())} 
-              selected={formatDate(selectedDate)}
-              onSelectedChange={date => setSelectedDate(date)} 
+              current={selectedDate} 
+              selected={selectedDate}
+              onSelectedChange={date => setSelectedDate(formatDateToDash(date))} 
               options={{
                 mainColor: 'crimson', 
               }}
@@ -109,7 +118,7 @@ const AnalyseScreen = () => {
                 <Text style={styles.buttonText}>Confirmer</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleCancelModal} style={[styles.buttonModal, styles.cancelButton]}>
-                <Text style={styles.buttonText}>Annuler</Text>
+                <Text style={styles.buttonText}>Réinitialiser</Text>
               </TouchableOpacity>
             </View>
           </View>
