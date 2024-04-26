@@ -33,10 +33,7 @@ const AnalyseScreen = () => {
   const [selectedDate, setSelectedDate] = useState(formatDate(new Date()));
 
   const getTotalDepenses = () => {
-    const dateObj = new Date(selectedDate);
-    console.log(dateObj)
-    console.log(selectedDate);
-    const unsubscribe = firestore().collection('DepensesCollection').where("timestamp", "<=", dateObj).onSnapshot(snapshot => {
+    const unsubscribe = firestore().collection('DepensesCollection').where("timestamp", "<=", new Date(selectedDate)).onSnapshot(snapshot => {
       let totalSpends = 0;
       snapshot.forEach(depense => {
         totalSpends -= Number(depense.data().spends); 
