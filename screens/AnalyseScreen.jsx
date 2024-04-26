@@ -18,6 +18,7 @@ const AnalyseScreen = () => {
     
     return formattedDate;
   }
+  
 
   const formatDate = (date) => {
     const year = date.getFullYear();
@@ -33,20 +34,25 @@ const AnalyseScreen = () => {
   const [selectedDate, setSelectedDate] = useState(formatDate(new Date()));
 
   const getTotalDepenses = () => {
-    const unsubscribe = firestore().collection('DepensesCollection').where("timestamp", "<=", new Date(selectedDate)).onSnapshot(snapshot => {
+    const dateObj = new Date(selectedDate);
+    dateObj.setUTCHours(23, 23, 23, 23);
+    
+    const unsubscribe = firestore().collection('DepensesCollection').where("timestamp", "<=", dateObj).onSnapshot(snapshot => {
       let totalSpends = 0;
       snapshot.forEach(depense => {
         totalSpends -= Number(depense.data().spends); 
       });
-      console.log(totalDepense);
       setTotalDepense(totalSpends);
     });
   
     return unsubscribe;
   };
-
+  
   const getTotalRevenus = () => {
-    const unsubscribe = firestore().collection('RevenusCollection').where("timestamp", "<=", new Date(selectedDate)).onSnapshot(snapshot => {
+    const dateObj = new Date(selectedDate);
+    dateObj.setUTCHours(23, 23, 23, 23);
+
+    const unsubscribe = firestore().collection('RevenusCollection').where("timestamp", "<=", dateObj).onSnapshot(snapshot => {
       let totalRevenus = 0;
       snapshot.forEach(revenu => {
         totalRevenus += Number(revenu.data().spends);  
@@ -61,7 +67,9 @@ const AnalyseScreen = () => {
     const unsubscribe = firestore().collection('EmployesCollection').onSnapshot(querySnapshot => {
         let totalEmployes = 0;
         querySnapshot.forEach(async employeeDoc => {
-            const spendSnapshot = await employeeDoc.ref.collection('SpendModifications').where("timestamp", "<=", new Date(selectedDate)).get();
+            const dateObj = new Date(selectedDate);
+            dateObj.setUTCHours(23, 59, 59, 999);
+            const spendSnapshot = await employeeDoc.ref.collection('SpendModifications').where("timestamp", "<=", dateObj).get();
             spendSnapshot.forEach(doc => {
                 totalEmployes -= doc.data().spends;
             });
