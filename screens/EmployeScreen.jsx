@@ -123,18 +123,18 @@ const EmployeScreen = () => {
             <Modal
               visible={openDeleteModal}
               transparent={true}
-              animationType="fade"
+              animationType="slide"
               onRequestClose={() => setOpenDeleteModal(false)}
             >
               <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
-                  <Text style={styles.modalText}>Êtes-vous sûr de vouloir supprimer ?</Text>
+                  <Text style={styles.modalText}>Confirmer la suppression</Text>
                   <View style={styles.modalButtonsContainer}>
                     <TouchableOpacity style={styles.modalButton} onPress={() => handleDelete(selectedEmploye)}>
-                      <Text style={styles.modalButtonText}>OUI</Text>
+                      <Text style={styles.modalButtonText}>Confirmer</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.modalButton,{backgroundColor:"crimson"}]} onPress={() => setOpenDeleteModal(false)}>
-                      <Text style={styles.modalButtonText}>Fermer</Text>
+                      <Text style={styles.modalButtonText}>Annuler</Text>
                     </TouchableOpacity>
                   </View>
                   </View>
@@ -248,37 +248,46 @@ const styles = StyleSheet.create({
     },
     modalContainer: {
       flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      justifyContent: 'center',
-      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+      justifyContent: "center",
+      alignItems: "center",
     },
     modalContent: {
-      backgroundColor: 'white',
-      borderRadius: 10,
-      padding: 25,
-      alignItems: 'center',
-      elevation: 5,
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
     },
     modalText: {
-      fontSize: 18,
-      marginBottom: 20,
-      textAlign: 'center',
-      color:"black"
+      marginBottom: 15,
+      textAlign: "center",
+      color: "black",
+      fontWeight: "600",
     },
     modalButtonsContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
     },
     modalButton: {
-      backgroundColor: '#2196F3',
-      borderRadius: 5,
-      paddingVertical: 10,
-      paddingHorizontal: 20,
-      marginHorizontal: 10,
+      backgroundColor: "#2196F3",
+      borderRadius: 20,
+      padding: 10,
+      elevation: 2,
+      margin: 10,
     },
     modalButtonText: {
-      color: 'white',
-      fontSize: 16,
+      color: "white",
+        fontWeight: "bold",
+        textAlign: "center",
     },
 });
 
