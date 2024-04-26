@@ -85,6 +85,11 @@ const EmployeScreen = () => {
     const handleCloseAll = () =>{
       setShowDelete(false);
     }
+
+    const handleEmployePress = (item) =>{
+      setSelectedEmploye(item);
+      setIsModalSpoendsOpen(true);
+    }
   
     const renderItem = ({ item }) => (
       <TouchableOpacity style={styles.itemContainer} onPress={() => handleEmployePress(item)} onLongPress={() => openDelete(item)}>
@@ -128,7 +133,7 @@ const EmployeScreen = () => {
                     <TouchableOpacity style={styles.modalButton} onPress={() => handleDelete(selectedEmploye)}>
                       <Text style={styles.modalButtonText}>OUI</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.modalButton,{backgroundColor:"gray"}]} onPress={() => setOpenDeleteModal(false)}>
+                    <TouchableOpacity style={[styles.modalButton,{backgroundColor:"crimson"}]} onPress={() => setOpenDeleteModal(false)}>
                       <Text style={styles.modalButtonText}>Fermer</Text>
                     </TouchableOpacity>
                   </View>
@@ -265,7 +270,7 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
     },
     modalButton: {
-      backgroundColor: 'crimson',
+      backgroundColor: '#2196F3',
       borderRadius: 5,
       paddingVertical: 10,
       paddingHorizontal: 20,
