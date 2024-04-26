@@ -40,24 +40,31 @@ const EmployeScreen = () => {
     
     const handleDelete = async (item) => {
       try {
-        const documentRef = firestore().collection('EmployesCollection').doc(item.id);
-        const deletedItem = item; 
+        const employeeRef = firestore().collection('EmployesCollection').doc(item.id);
     
-        await documentRef.delete();
-        setOpenDeleteModal(false);
+        const spendModsSnapshot = await employeeRef.collection('SpendModifications').get();
+        const batch = firestore().batch();
+        spendModsSnapshot.forEach((doc) => {
+          batch.delete(doc.ref);
+        });
+        await batch.commit();
+    
+        await employeeRef.delete();
     
         await firestore().collection('changeLogs').add({
-          Id: deletedItem.id,
-          operation:`Employé a été supprimé, ${deletedItem.description}`,
+          Id: item.id,
+          operation: `Employé a été supprimé, ${item.description}`,
           type: "Suppression",
           timestamp: new Date(),
         });
     
         console.log("Item deleted successfully");
+        setOpenDeleteModal(false);
       } catch (error) {
         console.error("Error deleting item:", error);
       }
     };
+    
     
     
     const handleSearch = (query) =>{
