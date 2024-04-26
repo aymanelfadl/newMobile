@@ -13,7 +13,8 @@ const DepensesScreen = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentAudio, setCurrentAudio] = useState(null);
   const [searchQuery ,setSearchQuery] = useState(null);
-
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState(null);
 
   useEffect(() => {
     const unsubscribe = firestore().collection('DepensesCollection').onSnapshot(snapshot => {
@@ -37,7 +38,6 @@ const DepensesScreen = () => {
     
     return () => unsubscribe();
   },[]);    
-
 
   const handleSearch = (query) =>{
     setSearchQuery(query);
@@ -70,7 +70,7 @@ const DepensesScreen = () => {
   const renderItem = ({ item }) => {
     if (item.thumbnailType === 'audio') {
       return (
-        <TouchableOpacity style={styles.itemContainer} onPress={()=>handleAudioPress(item)}>
+        <TouchableOpacity style={styles.itemContainer} onPress={()=>handleAudioPress(item)} onLongPress={()=>openDeleteModal(item.id)}>
           <Text style={{marginVertical:8}}>
             <Icon name={isPlaying ? "pause-circle" : "play-circle"} size={50} color="black" />
           </Text>
@@ -81,7 +81,7 @@ const DepensesScreen = () => {
       );
     } else {
       return (
-        <TouchableOpacity style={styles.itemContainer} onPress={() => openImageModal(item.thumbnail)}>
+        <TouchableOpacity style={styles.itemContainer} onPress={() => openImageModal(item.thumbnail)} onLongPress={()=>openDeleteModal(item.id)}>
           <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
           <Text style={styles.description}>{item.description}</Text>
           <Text style={styles.spends}><Text style={{ fontWeight: "bold" }}>-</Text>{item.spends} MAD</Text>
@@ -90,7 +90,6 @@ const DepensesScreen = () => {
       );
     }
   };
-  
 
   const handleAudioPress = (item) => {
     if (currentAudio) {
@@ -105,8 +104,6 @@ const DepensesScreen = () => {
       setIsPlaying(true);
     }
   };
-  
-  
 
   const openAudioPlayer = (audioUri) => {
     const sound = new Sound(audioUri, '', (error) => {
@@ -125,9 +122,25 @@ const DepensesScreen = () => {
       }
     });
   };
-  
-  
 
+  const openDeleteModal = (itemId) => {
+    setSelectedItemId(itemId);
+    setDeleteModalVisible(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedItemId) {
+      firestore().collection('DepensesCollection').doc(selectedItemId).delete()
+      .then(() => {
+        console.log("Item deleted successfully");
+        setDeleteModalVisible(false);
+      })
+      .catch((error) => {
+        console.error("Error removing item: ", error);
+        setDeleteModalVisible(false);
+      });
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -157,6 +170,38 @@ const DepensesScreen = () => {
             <Icon name="close" size={30} color="white" />
           </TouchableOpacity>
           <Image source={{ uri: selectedImage }} style={styles.modalImage} />
+        </View>
+      </Modal>
+
+      {/* Delete Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={deleteModalVisible}
+        onRequestClose={() => {
+            setDeleteModalVisible(false);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Confirmer la suppression ?</Text>
+            <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+              <TouchableOpacity
+                  style={[styles.openButton, { backgroundColor: "#2196F3", }]}
+                  onPress={handleConfirmDelete}
+              >
+                  <Text style={styles.textStyle}>Confirmer</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                  style={[styles.openButton, { backgroundColor: "crimson" }]}
+                  onPress={() => {
+                      setDeleteModalVisible(false);
+                  }}
+              >
+                  <Text style={styles.textStyle}>Annuler</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
       </Modal>
     </View>
@@ -249,6 +294,44 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 20,
   },
-})
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+        width: 0,
+        height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  openButton: {
+    backgroundColor: "#F194FF",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    margin: 10,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+    color: "black",
+    fontWeight: "600",
+  },
+});
 
 export default DepensesScreen;
