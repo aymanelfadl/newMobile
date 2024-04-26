@@ -10,7 +10,7 @@ const ExchangeScreen = () => {
     const [deleteIndex, setDeleteIndex] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
-    const [suggestions, setSuggestions] = useState(["Azize", "Abdletife"]);
+    const [suggestions, setSuggestions] = useState(["Azize ", "Abdletife"]);
 
     useEffect(() => {
         const unsubscribe = firestore().collection("ExchangeCollection")
@@ -39,8 +39,6 @@ const ExchangeScreen = () => {
 
         try {
             await firestore().collection("ExchangeCollection").add(newItem);
-
-            setName('');
             setSpend('');
         } catch (error) {
             console.error("Error adding document: ", error);
