@@ -44,8 +44,8 @@ const EmployeScreen = () => {
         const deletedItem = item; 
     
         await documentRef.delete();
+        setOpenDeleteModal(false);
     
-
         await firestore().collection('changeLogs').add({
           Id: deletedItem.id,
           operation:`Employé a été supprimé, ${deletedItem.description}`,
@@ -53,7 +53,6 @@ const EmployeScreen = () => {
           timestamp: new Date(),
         });
     
-        setOpenDeleteModal(false);
         console.log("Item deleted successfully");
       } catch (error) {
         console.error("Error deleting item:", error);

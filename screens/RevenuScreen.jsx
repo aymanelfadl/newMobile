@@ -133,20 +133,28 @@ const RevenuScreen = () => {
     setDeleteModalVisible(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (selectedItemId) {
-      firestore().collection('RevenusCollection').doc(selectedItemId).delete()
-      .then(() => {
+      try {
+
+        await firestore().collection('RevenusCollection').doc(selectedItemId).delete();
         console.log("Item deleted successfully");
         setDeleteModalVisible(false);
-      })
-      .catch((error) => {
+  
+
+        await firestore().collection('changeLogs').add({
+          Id: selectedItemId,
+          operation: `Revenu a été supprimé, ${deletedItem.description}`, 
+          type: "Suppression",
+          timestamp: new Date(),
+        });
+      } catch (error) {
         console.error("Error removing item: ", error);
         setDeleteModalVisible(false);
-      });
+      }
     }
   };
-
+  
   
 
 
