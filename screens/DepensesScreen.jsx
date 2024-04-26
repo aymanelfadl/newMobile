@@ -132,15 +132,17 @@ const DepensesScreen = () => {
   const handleConfirmDelete = async () => {
     if (selectedItemId) {
       try {
-
-        await firestore().collection('RevenusCollection').doc(selectedItemId).delete();
+        
+        const itemSnapshot = await firestore().collection('DepensesCollection').doc(selectedItemId).get();
+        const deletedItem = itemSnapshot.data();
+  
+        await firestore().collection('DepensesCollection').doc(selectedItemId).delete();
         console.log("Item deleted successfully");
         setDeleteModalVisible(false);
   
-
         await firestore().collection('changeLogs').add({
           Id: selectedItemId,
-          operation: `Depense a été supprimé, ${deletedItem.description}`, 
+          operation: `Depense a été supprimé, ${deletedItem.description}`,
           type: "Suppression",
           timestamp: new Date(),
         });
@@ -150,6 +152,7 @@ const DepensesScreen = () => {
       }
     }
   };
+  
 
   return (
     <View style={styles.container}>
