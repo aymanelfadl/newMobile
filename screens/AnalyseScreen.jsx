@@ -6,6 +6,7 @@ import Header from "../components/Header";
 import ShowAnalyse from "../components/ShowAnalyse";
 import Icon from "react-native-vector-icons/EvilIcons";
 import DatePicker from 'react-native-modern-datepicker';
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
 
 
@@ -66,18 +67,31 @@ const AnalyseScreen = () => {
   const getTotalEmployes = () => {
     const unsubscribe = firestore().collection('EmployesCollection').onSnapshot(querySnapshot => {
         let totalEmployes = 0;
+
         querySnapshot.forEach(async employeeDoc => {
-            const dateObj = new Date(selectedDate);
+            let dateObj = new Date(selectedDate);
             dateObj.setUTCHours(23, 59, 59, 999);
-            const spendSnapshot = await employeeDoc.ref.collection('SpendModifications').where("timestamp", "<=", dateObj).get();
+            console.log("Selected Date Object:", dateObj);
+
+            const spendSnapshot = await employeeDoc.ref.collection('SpendModifications').get();
             spendSnapshot.forEach(doc => {
-                totalEmployes -= doc.data().spends;
+                const docDate = new Date(doc.data().dateAdded);
+                console.log("Document Date Added:", docDate);
+                if (docDate <= dateObj) {
+                    console.log("Adding to total employes:", doc.data().spends);
+                    totalEmployes -= doc.data().spends; 
+                }
             });
+            console.log("Total Depense Employe:", totalEmployes);
             setTotalDepenseEmp(totalEmployes);
         });
+
     });
+
     return unsubscribe;
-  };
+};
+
+
 
   useEffect(() => {
     const fetchInitialData = async () => {
