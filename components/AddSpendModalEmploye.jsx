@@ -3,7 +3,9 @@ import { View, Modal, StyleSheet, Text, TextInput, TouchableOpacity } from 'reac
 import firestore from '@react-native-firebase/firestore';
 import Icon from "react-native-vector-icons/FontAwesome"
 import DatePicker from 'react-native-date-picker';
-import * as Progress from 'react-native-progress'
+import * as Progress from 'react-native-progress';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const AddSpendModalEmploye = ({ visible, employee, onClose }) => {
    
@@ -13,6 +15,23 @@ const AddSpendModalEmploye = ({ visible, employee, onClose }) => {
     const [uploadProgress, setUploadProgress] = useState(0);
     const [dots, setDots] = useState('');
     const [isDateModalOpen, setIsDateModalOpen] = useState(false);
+    const [userId, setUserId] = useState(null);
+
+    useEffect(() => {
+    const getUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem('userId');
+        if (storedUserId !== null) {
+          setUserId(storedUserId);
+        }
+      } catch (error) {
+        console.error('Error retrieving user ID from local storage:', error);
+      }
+    };
+
+    getUserId();
+  }, []);
+  
 
     useEffect(() => {
      let intervalId;
@@ -53,7 +72,7 @@ const AddSpendModalEmploye = ({ visible, employee, onClose }) => {
         onClose();
         try {
             setUploadProgress(0);
-            const employeeDoc = await firestore().collection('EmployesCollection').doc(employee.id).get();
+            const employeeDoc = await firestore().collection(`Users/${userId}/EmployesCollection`).doc(employee.id).get();
             const currentSpends = employeeDoc.data().spends;
             const spendsToAdd = Number(spends);
     
@@ -64,14 +83,14 @@ const AddSpendModalEmploye = ({ visible, employee, onClose }) => {
             let totalSpends = isNaN(spendsToAdd) ? currentSpends : spendsToAdd + currentSpends;
     
             
-            await firestore().collection('EmployesCollection').doc(employee.id).update({
+            await firestore().collection(`Users/${userId}/EmployesCollection`).doc(employee.id).update({
                 spends: totalSpends,
                 dateAdded: formattedDate,
                 timestamp: new Date(),
             });
     
 
-            const spendModificationRef = await firestore().collection('EmployesCollection').doc(employee.id).collection('SpendModifications').add({
+            const spendModificationRef = await firestore().collection(`Users/${userId}/EmployesCollection`).doc(employee.id).collection('SpendModifications').add({
                 spends: spendsToAdd, 
                 dateAdded: formattedDate,
                 timestamp: new Date(),

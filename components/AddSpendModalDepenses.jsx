@@ -7,6 +7,7 @@ import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import Sound from 'react-native-sound';
 import * as Progress from 'react-native-progress';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AddSpendModalDepenses = ({ visible, onClose }) => {
   const [description, setDescription] = useState('');
@@ -21,6 +22,7 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [dots, setDots] = useState('');
   const [suggestionss , setSuggestions] = useState([]);
+  const [userId, setUserId] = useState(null);
 
   const requestPermissions = async () => {
     try {
@@ -45,8 +47,24 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
     }
   };
 
+  useEffect(() => {
+    const getUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem('userId');
+        if (storedUserId !== null) {
+          setUserId(storedUserId);
+        }
+      } catch (error) {
+        console.error('Error retrieving user ID from local storage:', error);
+      }
+    };
+
+    getUserId();
+  }, []);
+  
+
   const fetchSuggestions = () => {
-    const unsubscribe = firestore().collection('DepensesCollection').onSnapshot(snapshot => {
+    const unsubscribe = firestore().collection(`Users/${userId}/DepensesCollection`).onSnapshot(snapshot => {
       const fetchedSuggestions = snapshot.docs.map(doc => doc.data().description);
       setSuggestions(fetchedSuggestions);
     });
@@ -228,7 +246,7 @@ const AddSpendModalDepenses = ({ visible, onClose }) => {
       
       setUploadProgress(0.50);
 
-      const depenseRef = await firestore().collection('DepensesCollection').add({
+      const depenseRef = await firestore().collection(`Users/${userId}/DepensesCollection`).add({
         description: finalDescription,
         thumbnail: mediaUrl,
         thumbnailType: uploadType === null ? "image" : uploadType,

@@ -5,6 +5,8 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import firestore from '@react-native-firebase/firestore';
 import Sound from "react-native-sound";
 import AddSpendModalRevenu from "../components/AddSpendModalRevenu";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const RevenuScreen = () => {
   const [items, setItems] = useState([]);
@@ -15,30 +17,48 @@ const RevenuScreen = () => {
   const [searchQuery ,setSearchQuery] = useState(null);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState(null);
+  const [userId, setUserId] = useState(null);
 
 
   useEffect(() => {
-    const unsubscribe = firestore().collection('RevenusCollection').onSnapshot(snapshot => {
-      const fetchedItems = [];
-      snapshot.forEach(documentSnapshot => {
-        const data = documentSnapshot.data();
-        const item = {
-          id: documentSnapshot.id,
-          ...data,
-          timestamp: data.timestamp.toDate(),
-          isAudioPlaying: false,
-        };
-        fetchedItems.push(item);
-      });
-      fetchedItems.sort((a, b) => b.timestamp - a.timestamp);
-      setItems(fetchedItems);
+    const getUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem('userId');
+        if (storedUserId !== null) {
+          setUserId(storedUserId);
+        }
+      } catch (error) {
+        console.error('Error retrieving user ID from local storage:', error);
+      }
+    };
 
-    }, error => {
-      console.error('Error fetching data:', error);
-    });
-    
-    return () => unsubscribe();
-  },[]);    
+    getUserId();
+  }, []);
+
+
+  useEffect(() => {
+    if(userId){
+      const unsubscribe = firestore().collection(`Users/${userId}/RevenusCollection`).onSnapshot(snapshot => {
+        const fetchedItems = [];
+        snapshot.forEach(documentSnapshot => {
+          const data = documentSnapshot.data();
+          const item = {
+            id: documentSnapshot.id,
+            ...data,
+            timestamp: data.timestamp.toDate(),
+            isAudioPlaying: false,
+          };
+          fetchedItems.push(item);
+        });
+        fetchedItems.sort((a, b) => b.timestamp - a.timestamp);
+        setItems(fetchedItems);
+
+      }, error => {
+        console.error('Error fetching data:', error);
+      });
+      return () => unsubscribe();
+    }
+  },[userId]);    
 
 
   const handleSearch = (query) =>{
@@ -136,10 +156,10 @@ const RevenuScreen = () => {
   const handleConfirmDelete = async () => {
     if (selectedItemId) {
       try {
-        const itemSnapshot = await firestore().collection('RevenusCollection').doc(selectedItemId).get();
+        const itemSnapshot = await firestore().collection(`Users/${userId}/RevenuCollection`).doc(selectedItemId).get();
         const deletedItem = itemSnapshot.data();
   
-        await firestore().collection('RevenusCollection').doc(selectedItemId).delete();
+        await firestore().collection(`Users/${userId}/RevenuCollection`).doc(selectedItemId).delete();
         console.log("Item deleted successfully");
         setDeleteModalVisible(false);
   

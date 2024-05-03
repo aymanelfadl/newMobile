@@ -1,10 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { View, Modal, StyleSheet, Text, TextInput, TouchableOpacity, } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const EmployeeModal = ({ visible, onClose }) => {
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [userId, setUserId] = useState(null);
+ 
+  useEffect(() => {
+    const getUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem('userId');
+        if (storedUserId !== null) {
+          setUserId(storedUserId);
+        }
+      } catch (error) {
+        console.error('Error retrieving user ID from local storage:', error);
+      }
+    };
+
+    getUserId();
+  }, []);
  
 
   const formatDate = (date) =>{
@@ -21,7 +39,7 @@ const EmployeeModal = ({ visible, onClose }) => {
         const formattedDate = formatDate(currentDate);
         const img = 'https://firebasestorage.googleapis.com/v0/b/expense-manager-376bc.appspot.com/o/employes.png?alt=media&token=c33d6436-242a-480e-bb58-d52ebeaa642a'
         
-        const employeeRef = await firestore().collection('EmployesCollection').add({
+        const employeeRef = await firestore().collection(`Users/${userId}/EmployesCollection`).add({
           thumbnail: img, 
           description: name + ' ' + lastName,
           spends: 0,

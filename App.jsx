@@ -11,9 +11,11 @@ import AnalyseScreen from './screens/AnalyseScreen';
 import NotificationsScreen from './screens/NotificationsScreen';
 import ExchangeScreen from './screens/ExchangeScreen';
 import SplashScreen from './screens/SplashScreen';
+import LoginScreen from './screens/LoginScreen';
 
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator(); 
+const Stack = createStackNavigator();
+
 
 const TabNavigator = () => (
   <Tab.Navigator
@@ -58,7 +60,7 @@ const TabNavigator = () => (
       name="Revenu"
       component={RevenuScreen}
     />
-    {/* employee================================= */}
+    {/* employee=====================================*/}
     <Tab.Screen
       name="Employé"
       component={EmployeScreen}
@@ -77,6 +79,7 @@ const App = () => {
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Splash">
           <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} /> 
             <Stack.Screen
               name="TabNavigator" 
               component={TabNavigator} 

@@ -5,6 +5,8 @@ import AddSpendModal from "../components/AddSpendModalEmploye";
 import EmployeeModal from "../components/EmployeeModal";
 import Header from "../components/Header";
 import firestore from '@react-native-firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 const EmployeScreen = () => {
@@ -15,32 +17,51 @@ const EmployeScreen = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [openDeleteModal,setOpenDeleteModal] = useState(false);
     const [itemsData,setItemsData] = useState(null); 
+    const [userId, setUserId] = useState(null);
+
  
     useEffect(() => {
-      const unsubscribe = firestore().collection('EmployesCollection').onSnapshot(querySnapshot => {
-        const employees = querySnapshot.docs.map(doc => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            dateAdded: data.dateAdded,
-            description: data.description,
-            spends: data.spends,
-            thumbnail: data.thumbnail,
-            timestamp: data.timestamp.toDate(), 
-          };
+      if(userId){
+        const unsubscribe = firestore().collection(`Users/${userId}/EmployesCollection`).onSnapshot(querySnapshot => {
+          const employees = querySnapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+              id: doc.id,
+              dateAdded: data.dateAdded,
+              description: data.description,
+              spends: data.spends,
+              thumbnail: data.thumbnail,
+              timestamp: data.timestamp.toDate(), 
+            };
+          });
+      
+          employees.sort((a, b) => b.timestamp - a.timestamp);
+          setItemsData(employees);
         });
+      
+        return () => unsubscribe();
+      }
+    }, [userId]);
     
-        employees.sort((a, b) => b.timestamp - a.timestamp);
-        setItemsData(employees);
-      });
-    
-      return () => unsubscribe();
+    useEffect(() => {
+      const getUserId = async () => {
+        try {
+          const storedUserId = await AsyncStorage.getItem('userId');
+          if (storedUserId !== null) {
+            setUserId(storedUserId);
+          }
+        } catch (error) {
+          console.error('Error retrieving user ID from local storage:', error);
+        }
+      };
+  
+      getUserId();
     }, []);
-    
-    
+
+
     const handleDelete = async (item) => {
       try {
-        const employeeRef = firestore().collection('EmployesCollection').doc(item.id);
+        const employeeRef = firestore().collection(`Users/${userId}/EmployesCollection`).doc(item.id);
     
         const spendModsSnapshot = await employeeRef.collection('SpendModifications').get();
         const batch = firestore().batch();

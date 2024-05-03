@@ -5,6 +5,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import firestore from '@react-native-firebase/firestore';
 import AddSpendModalDepenses from "../components/AddSpendModalDepenses";
 import Sound from "react-native-sound";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DepensesScreen = () => {
   const [items, setItems] = useState([]);
@@ -15,9 +16,28 @@ const DepensesScreen = () => {
   const [searchQuery ,setSearchQuery] = useState(null);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState(null);
+  const [userId, setUserId] = useState(null);
+
 
   useEffect(() => {
-    const unsubscribe = firestore().collection('DepensesCollection').onSnapshot(snapshot => {
+    const getUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem('userId');
+        if (storedUserId !== null) {
+          setUserId(storedUserId);
+        }
+      } catch (error) {
+        console.error('Error retrieving user ID from local storage:', error);
+      }
+    };
+
+    getUserId();
+  }, []);
+  
+
+useEffect(() => {
+  if (userId) {
+    const unsubscribe = firestore().collection(`Users/${userId}/DepensesCollection`).onSnapshot(snapshot => {
       const fetchedItems = [];
       snapshot.forEach(documentSnapshot => {
         const data = documentSnapshot.data();
@@ -27,17 +47,19 @@ const DepensesScreen = () => {
           timestamp: data.timestamp.toDate(),
           isAudioPlaying: false,
         };
+        console.log(item);
         fetchedItems.push(item);
       });
       fetchedItems.sort((a, b) => b.timestamp - a.timestamp);
       setItems(fetchedItems);
-
     }, error => {
       console.error('Error fetching data:', error);
     });
     
     return () => unsubscribe();
-  },[]);    
+  }
+}, [userId]);
+  
 
   const handleSearch = (query) =>{
     setSearchQuery(query);
@@ -133,10 +155,10 @@ const DepensesScreen = () => {
     if (selectedItemId) {
       try {
         
-        const itemSnapshot = await firestore().collection('DepensesCollection').doc(selectedItemId).get();
+        const itemSnapshot = await firestore().collection(`Users/${userId}/DepensesCollection`).doc(selectedItemId).get();
         const deletedItem = itemSnapshot.data();
   
-        await firestore().collection('DepensesCollection').doc(selectedItemId).delete();
+        await firestore().collection(`Users/${userId}/DepensesCollection`).doc(selectedItemId).delete();
         console.log("Item deleted successfully");
         setDeleteModalVisible(false);
   
