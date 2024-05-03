@@ -17,11 +17,11 @@ const LoginScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: "crimson" }}>
-      <View style={{flexDirection:"row",marginBottom:"10%"}}>
+    <View style={{ flex: 1,alignItems: 'center', backgroundColor: "crimson" }}>
+      <View style={{flexDirection:"row",marginTop:"10%",marginBottom:"10%" }}>
         <View style={{borderWidth:2, borderColor: "white",width:"50%",height:"1%",alignSelf:"center", marginRight:"10%" }}></View>
         <Text style={{fontSize:28,color:"white"}}>
-            Bienvenue
+          Passer à
         </Text>
         <View style={{borderWidth:2, borderColor: "white",width:"50%",height:"1%",alignSelf:"center" ,marginLeft:"10%"}}></View>
 

@@ -14,7 +14,7 @@ const AddItemBtn = () => {
   const [openDepenseModal, setOpenDepenseModal]= useState(false);
   const [openRevenuModal, setOpenRevenuModal]= useState(false);
   
-  const notificationIconName =  'bell-badge-outline';
+  const notificationIconName =  'account-switch';
 
   const navigation = useNavigation(); 
 
@@ -48,7 +48,7 @@ const AddItemBtn = () => {
   
   return (
     <View style={styles.mainContainer}>
-      <Header title={"Accueil"} MyIcon={notificationIconName} onIconPress={()=> {navigation.navigate("Notifications")}}/>
+      <Header title={"Accueil"} MyIcon={notificationIconName} onIconPress={()=> {navigation.navigate("Login")}}/>
       {renderButtons()}
       <AddSpendModalDepenses visible={openDepenseModal} onClose={() =>{setOpenDepenseModal(false)}} />
       <AddSpendModalRevenu visible={openRevenuModal} onClose={() =>{setOpenRevenuModal(false)}} />      

@@ -6,13 +6,16 @@ import Header from "../components/Header";
 import ShowAnalyse from "../components/ShowAnalyse";
 import Icon from "react-native-vector-icons/EvilIcons";
 import DatePicker from 'react-native-modern-datepicker';
-import { Colors } from "react-native/Libraries/NewAppScreen";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 
 const AnalyseScreen = () => {
   const navigation = useNavigation();
 
+  
+  
   function formatDateToDash(dateString) {
     const parts = dateString.split('/');
     const formattedDate = `${parts[0]}-${parts[1]}-${parts[2]}`;
@@ -20,25 +23,41 @@ const AnalyseScreen = () => {
     return formattedDate;
   }
   
-
+  
   const formatDate = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
-
+  
   const [totalDepense, setTotalDepense] = useState(0);
   const [totalRevenu, setTotalRevenu] = useState(0);
   const [totalDepenseEmp, setTotalDepenseEmp] = useState(0);
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(formatDate(new Date()));
+  const [userId, setUserId] = useState(null);
+  
+  useEffect(() => {
+    const getUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem('userId');
+        if (storedUserId !== null) {
+          setUserId(storedUserId);
+        }
+      } catch (error) {
+        console.error('Error retrieving user ID from local storage:', error);
+      }
+    };
 
+    getUserId();
+  }, []);
+  
   const getTotalDepenses = () => {
     const dateObj = new Date(selectedDate);
     dateObj.setUTCHours(23, 23, 23, 23);
     
-    const unsubscribe = firestore().collection('DepensesCollection').where("timestamp", "<=", dateObj).onSnapshot(snapshot => {
+    const unsubscribe = firestore().collection(`Users/${userId}/DepensesCollection`).where("timestamp", "<=", dateObj).onSnapshot(snapshot => {
       let totalSpends = 0;
       snapshot.forEach(depense => {
         totalSpends -= Number(depense.data().spends); 
@@ -53,7 +72,7 @@ const AnalyseScreen = () => {
     const dateObj = new Date(selectedDate);
     dateObj.setUTCHours(23, 23, 23, 23);
 
-    const unsubscribe = firestore().collection('RevenusCollection').where("timestamp", "<=", dateObj).onSnapshot(snapshot => {
+    const unsubscribe = firestore().collection(`Users/${userId}/RevenusCollection`).where("timestamp", "<=", dateObj).onSnapshot(snapshot => {
       let totalRevenus = 0;
       snapshot.forEach(revenu => {
         totalRevenus += Number(revenu.data().spends);  
@@ -65,7 +84,7 @@ const AnalyseScreen = () => {
   };
   
   const getTotalEmployes = () => {
-    const unsubscribe = firestore().collection('EmployesCollection').onSnapshot(querySnapshot => {
+    const unsubscribe = firestore().collection(`Users/${userId}/EmployesCollection`).onSnapshot(querySnapshot => {
         let totalEmployes = 0;
 
         querySnapshot.forEach(async employeeDoc => {
@@ -90,12 +109,13 @@ const AnalyseScreen = () => {
 
 
   useEffect(() => {
+    if(userId){
     const fetchInitialData = async () => {
         await Promise.all([getTotalDepenses(), getTotalRevenus(), getTotalEmployes()]);
     };
-
     fetchInitialData();
-  }, [selectedDate]); 
+    }
+  }, [selectedDate,userId]); 
 
   const handleCancelModal = () => {
     setSelectedDate(formatDate(new Date()));

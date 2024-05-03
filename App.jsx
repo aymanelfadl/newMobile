@@ -1,4 +1,5 @@
-import { NavigationContainer } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -12,10 +13,11 @@ import NotificationsScreen from './screens/NotificationsScreen';
 import ExchangeScreen from './screens/ExchangeScreen';
 import SplashScreen from './screens/SplashScreen';
 import LoginScreen from './screens/LoginScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
-
+const navigation = useNavigation();
 
 const TabNavigator = () => (
   <Tab.Navigator
@@ -46,69 +48,42 @@ const TabNavigator = () => (
       headerShown: false,
     })}
   >
-    <Tab.Screen
-      name="Accueil"
-      component={HomeScreen}
-    />
-    {/* depensesss ================================================== */}
-    <Tab.Screen
-      name="Dépenses"
-      component={DepensesScreen}
-    />
-    {/* revenu ======================================== */}
-    <Tab.Screen
-      name="Revenu"
-      component={RevenuScreen}
-    />
-    {/* employee=====================================*/}
-    <Tab.Screen
-      name="Employé"
-      component={EmployeScreen}
-    />
-    <Tab.Screen
-      name="Analyse"
-      component={AnalyseScreen}
-    />
+    <Tab.Screen name="Accueil" component={HomeScreen} />
+    <Tab.Screen name="Dépenses" component={DepensesScreen} />
+    <Tab.Screen name="Revenu" component={RevenuScreen} />
+    <Tab.Screen name="Employé" component={EmployeScreen} />
+    <Tab.Screen name="Analyse" component={AnalyseScreen} />
   </Tab.Navigator>
 );
 
 const App = () => {
+  
+  // TODO
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const userId = await AsyncStorage.getItem('userId');
+        userId === null ?  navigation.navigate("Login") : navigation.navigate("TabNavigator");
+      } catch (error) {
+        console.error('Error checking login status:', error);
+      }
+    };
 
+    checkLoginStatus();
+  }, []);
+
+  
   return (
     <GestureHandlerRootView>
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName="Splash">
-          <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} /> 
-            <Stack.Screen
-              name="TabNavigator" 
-              component={TabNavigator} 
-              options={{ 
-                headerShown: false, 
-              }} 
-            />
-            <Stack.Screen
-              name="Notifications" 
-              component={NotificationsScreen}  
-              options={{
-                headerTitleStyle: {
-                  color: 'crimson'
-                },
-                headerTintColor: 'crimson'
-              }}
-            />
-            <Stack.Screen
-              name="Échange"
-              component={ExchangeScreen}
-              options={{
-                headerTitleStyle:{
-                  color:"crimson"
-                },
-                headerTintColor:"crimson"
-              }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="TabNavigator" component={TabNavigator} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Splash" component={SplashScreen} />
+          <Stack.Screen name="Notifications" component={NotificationsScreen} />
+          <Stack.Screen name="Échange" component={ExchangeScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
     </GestureHandlerRootView>
   );
 };
