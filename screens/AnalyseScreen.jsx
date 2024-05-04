@@ -4,18 +4,14 @@ import firestore from "@react-native-firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header";
 import ShowAnalyse from "../components/ShowAnalyse";
-import Icon from "react-native-vector-icons/EvilIcons";
-import DatePicker from 'react-native-modern-datepicker';
+import Icon from "react-native-vector-icons/FontAwesome";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
-
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const AnalyseScreen = () => {
+
   const navigation = useNavigation();
 
-  
-  
   function formatDateToDash(dateString) {
     const parts = dateString.split('/');
     const formattedDate = `${parts[0]}-${parts[1]}-${parts[2]}`;
@@ -34,10 +30,40 @@ const AnalyseScreen = () => {
   const [totalDepense, setTotalDepense] = useState(0);
   const [totalRevenu, setTotalRevenu] = useState(0);
   const [totalDepenseEmp, setTotalDepenseEmp] = useState(0);
-  const [isDateModalOpen, setIsDateModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(formatDate(new Date()));
+  const [selectedEndDate, setSelectedEndDate] = useState(formatDate(new Date()));
   const [userId, setUserId] = useState(null);
+  const [showStartDate, setShowStartDate] = useState(false);
+  const [showEndDate, setShowEndDate] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
   
+  const onChangeStartDate = (event, selectedDate) => {
+    const currentDate = selectedDate
+    console.log(selectedDate);
+    setSelectedDate(formatDate(currentDate));
+    setShowStartDate(false);
+  };
+
+  const showModeStartDate = () => {
+    setShowStartDate(true); 
+  };
+
+  const onChangeEndDate = (event, selectedDate) => {
+    const currentDate = selectedDate
+    console.log(selectedDate);
+    setSelectedEndDate(formatDate(currentDate));
+    setShowEndDate(false);
+  };
+
+  const showModeEndDate = () => {
+    setShowEndDate(true); 
+  };
+
+  const toggleOptions = () =>{
+    setShowOptions(!showOptions)
+  }
+
+
   useEffect(() => {
     const getUserId = async () => {
       try {
@@ -117,10 +143,6 @@ const AnalyseScreen = () => {
     }
   }, [selectedDate,userId]); 
 
-  const handleCancelModal = () => {
-    setSelectedDate(formatDate(new Date()));
-    setIsDateModalOpen(false);
-  };
   
   return (
     <View style={styles.container}>
@@ -132,33 +154,25 @@ const AnalyseScreen = () => {
         totalEmp={totalDepenseEmp}
       />
       
-      <TouchableOpacity style={styles.button} onPress={()=>setIsDateModalOpen(true)}>
-        <Text><Icon name="calendar" size={45} color="white" /></Text>
-      </TouchableOpacity>
+      <View style={styles.button}>
+        <TouchableOpacity onPress={toggleOptions} >
+          <Text><Icon name="calendar" size={30} color="white"></Icon></Text>
+        </TouchableOpacity>
+        {showOptions &&
+         <>
+            <TouchableOpacity style={styles.buttonEndDate} onPress={showModeStartDate}>
+              <Text><Icon name="calendar-plus-o" size={20} color="white" /></Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.buttonStartDate} onPress={showModeEndDate}>
+              <Text><Icon name="calendar-minus-o" size={20} color="white" /></Text>
+            </TouchableOpacity>
+          </>
+        }
+        
+      </View>
 
-      <Modal visible={isDateModalOpen} animationType="slide" transparent={true}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <DatePicker
-              mode="calendar"
-              current={selectedDate} 
-              selected={selectedDate}
-              onSelectedChange={date => setSelectedDate(formatDateToDash(date))} 
-              options={{
-                mainColor: 'crimson', 
-              }}
-            />
-            <View style={styles.modalButtons}>
-              <TouchableOpacity onPress={() => setIsDateModalOpen(false)} style={[styles.buttonModal, styles.confirmButton]}>
-                <Text style={styles.buttonText}>Confirmer</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleCancelModal} style={[styles.buttonModal, styles.cancelButton]}>
-                <Text style={styles.buttonText}>Réinitialiser</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      {showStartDate && <DateTimePicker testID='dateTimePicker' value={new Date()} onChange={onChangeStartDate} />}
+      {showEndDate && <DateTimePicker testID='dateTimePicker' value={new Date()} onChange={onChangeEndDate} />}
 
     </View>
   );
@@ -183,55 +197,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     elevation : 5
   },
-  buttonModal: {
-    width: '45%',
-    borderRadius: 5,
-    paddingVertical: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  calendarButton: {
+  buttonStartDate: {
     position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: 'crimson',
-    width: 60,
-    height: 60,
-    borderRadius: 25,
+    bottom: 130,
+    backgroundColor: 'rgb(225 29 72)',
+    width: 50,
+    height: 50,
+    borderRadius: 100,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 5
+    elevation : 5
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
+  buttonEndDate: {
+    position: 'absolute',
+    bottom: 70,
+    backgroundColor: 'rgb(225 29 72)',
+    width: 50,
+    height: 50,
+    borderRadius: 100,
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    width: "80%",
-    elevation: 5,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-    paddingHorizontal: 20
-  },
-  confirmButton: {
-    backgroundColor: 'rgb(14, 165, 233)',
-  },
-  cancelButton: {
-    backgroundColor: 'crimson',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+    justifyContent: 'center',
+    elevation : 5
+  }
 });
 
 export default AnalyseScreen;
