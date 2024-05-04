@@ -156,19 +156,13 @@ const RevenuScreen = () => {
   const handleConfirmDelete = async () => {
     if (selectedItemId) {
       try {
-        const itemSnapshot = await firestore().collection(`Users/${userId}/RevenuCollection`).doc(selectedItemId).get();
+        const itemSnapshot = await firestore().collection(`Users/${userId}/RevenusCollection`).doc(selectedItemId).get();
         const deletedItem = itemSnapshot.data();
   
-        await firestore().collection(`Users/${userId}/RevenuCollection`).doc(selectedItemId).delete();
+        await firestore().collection(`Users/${userId}/RevenusCollection`).doc(selectedItemId).delete();
         console.log("Item deleted successfully");
         setDeleteModalVisible(false);
   
-        await firestore().collection('changeLogs').add({
-          Id: selectedItemId,
-          operation: `Revenu a été supprimé, ${deletedItem.description}`,
-          type: "Suppression",
-          timestamp: new Date(),
-        });
       } catch (error) {
         console.error("Error removing item: ", error);
         setDeleteModalVisible(false);
