@@ -50,7 +50,6 @@ const AnalyseScreen = () => {
 
   const onChangeEndDate = (event, selectedDate) => {
     const currentDate = selectedDate
-    console.log(selectedDate);
     setSelectedEndDate(formatDate(currentDate));
     setShowEndDate(false);
   };
@@ -80,31 +79,39 @@ const AnalyseScreen = () => {
   }, []);
   
   const getTotalDepenses = () => {
-    const dateObj = new Date(selectedDate);
-    dateObj.setUTCHours(23, 23, 23, 23);
-    
-    const unsubscribe = firestore().collection(`Users/${userId}/DepensesCollection`).where("timestamp", "<=", dateObj).onSnapshot(snapshot => {
-      let totalSpends = 0;
-      snapshot.forEach(depense => {
-        totalSpends -= Number(depense.data().spends); 
+    const dateStartObj = new Date(selectedDate);
+    const dateEndObj = new Date(selectedEndDate);
+
+    const unsubscribe = firestore()
+      .collection(`Users/${userId}/DepensesCollection`)
+      .onSnapshot(snapshot => {
+        let totalSpends = 0;
+        snapshot.forEach(depense => {
+          if(dateStartObj.toISOString().split("T")[0] <= depense.data().dateAdded &&  depense.data().dateAdded  <= dateEndObj.toISOString().split("T")[0]){
+            totalSpends -= Number(depense.data().spends); 
+          }
+          });
+        setTotalDepense(totalSpends);
       });
-      setTotalDepense(totalSpends);
-    });
   
-    return unsubscribe;
+      return unsubscribe;
   };
   
   const getTotalRevenus = () => {
-    const dateObj = new Date(selectedDate);
-    dateObj.setUTCHours(23, 23, 23, 23);
-
-    const unsubscribe = firestore().collection(`Users/${userId}/RevenusCollection`).where("timestamp", "<=", dateObj).onSnapshot(snapshot => {
-      let totalRevenus = 0;
-      snapshot.forEach(revenu => {
-        totalRevenus += Number(revenu.data().spends);  
+    const dateStartObj = new Date(selectedDate);
+    const dateEndObj = new Date(selectedEndDate);
+  
+    const unsubscribe = firestore()
+      .collection(`Users/${userId}/RevenusCollection`)
+      .onSnapshot(snapshot => {
+        let totalRevenus = 0;
+        snapshot.forEach(revenu => {
+          if(dateStartObj.toISOString().split("T")[0] <= revenu.data().dateAdded &&  revenu.data().dateAdded  <= dateEndObj.toISOString().split("T")[0]){
+            totalRevenus += Number(revenu.data().spends);  
+          }
+        });
+        setTotalRevenu(totalRevenus);
       });
-      setTotalRevenu(totalRevenus);
-    });
   
     return unsubscribe;
   };
@@ -114,14 +121,14 @@ const AnalyseScreen = () => {
         let totalEmployes = 0;
 
         querySnapshot.forEach(async employeeDoc => {
-            let dateObj = new Date(selectedDate);
-            dateObj.setUTCHours(23, 59, 59, 999);
+            let dateStartObj = new Date(selectedDate);
+            let dateEndObj = new Date(selectedEndDate);
             
             const spendSnapshot = await employeeDoc.ref.collection('SpendModifications').get();
             spendSnapshot.forEach(doc => {
-                const docDate = new Date(doc.data().dateAdded);
-                if (docDate <= dateObj) {
+                if ( dateStartObj.toISOString().split("T")[0] <= doc.data().dateAdded && doc.data().dateAdded <= dateEndObj.toISOString().split("T")[0] ) {
                     totalEmployes -= doc.data().spends; 
+                    console.log(doc);
                 }
             });
             setTotalDepenseEmp(totalEmployes);
@@ -141,7 +148,7 @@ const AnalyseScreen = () => {
     };
     fetchInitialData();
     }
-  }, [selectedDate,userId]); 
+  }, [selectedDate,userId,selectedEndDate]); 
 
   
   return (
