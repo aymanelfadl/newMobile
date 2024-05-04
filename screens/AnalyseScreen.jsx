@@ -126,19 +126,17 @@ const AnalyseScreen = () => {
             
             const spendSnapshot = await employeeDoc.ref.collection('SpendModifications').get();
             spendSnapshot.forEach(doc => {
-              console.log(doc);
-                if ( dateStartObj.toISOString().split("T")[0] <= doc.data().dateAdded && doc.data().dateAdded <= dateEndObj.toISOString().split("T")[0] ) {
+                if (dateStartObj.toISOString().split("T")[0] <= doc.data().dateAdded && doc.data().dateAdded <= dateEndObj.toISOString().split("T")[0]) {
                     totalEmployes -= doc.data().spends; 
-                    console.log("inside = :" + doc.data().spends);
                 }
             });
             setTotalDepenseEmp(totalEmployes);
-        });
-
+          });
     });
 
     return unsubscribe;
 };
+
 
 
 
@@ -149,7 +147,7 @@ const AnalyseScreen = () => {
     };
     fetchInitialData();
     }
-  }, [userId,totalDepense,totalRevenu,totalDepenseEmp]); 
+  }, [userId,selectedDate,selectedEndDate]); 
 
   
   return (
