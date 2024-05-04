@@ -1,10 +1,21 @@
 import React, { useEffect } from 'react';
 import { View, Image, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SplashScreen = ({ navigation }) => {
   useEffect(() => {
-    const timer = setTimeout(() => {
-      navigation.replace('TabNavigator'); 
+    const timer = setTimeout(async() => { 
+        try {
+          const userId = await AsyncStorage.getItem('userId');
+          console.log(userId);
+          if(userId === null) {
+            navigation.replace("Login")
+          }else{
+            navigation.replace("TabNavigator")
+          }
+        } catch (err) {
+          console.log("Checking login err: " + err);
+        }
     }, 2000);
 
     return () => clearTimeout(timer); 
