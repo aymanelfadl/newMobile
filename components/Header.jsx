@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const Header = ({ title, onSearching, MyIcon , onIconPress , dateSelcted}) => {
+const Header = ({ title, onSearching, MyIcon , onIconPress , dateSelcted, endDate}) => {
 
   const [openSearch, setOpenSearch] = useState(false);
   
@@ -14,8 +14,8 @@ const Header = ({ title, onSearching, MyIcon , onIconPress , dateSelcted}) => {
             {dateSelcted && (
               <View style={styles.dateContainer}>
                 <Text style={{color:"white",fontSize:12,}}>
-                  {dateSelcted}
-                </Text>
+                  From {dateSelcted} To {endDate}
+                </Text>      
               </View>
             )}
           <TouchableOpacity  style={{ paddingLeft: 6 }} onPress={onIconPress}>
@@ -71,10 +71,11 @@ const styles = StyleSheet.create({
     marginLeft: 15,
   },
   dateContainer:{
+    flexDirection:"row",
     justifyContent:"center",
-    padding: 4,
     borderRadius:100,
-    paddingHorizontal:18,
+    paddingHorizontal:4,
+    width:"60%",
     backgroundColor:"crimson" 
   },
   title: {
