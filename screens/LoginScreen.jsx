@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { EventRegister } from 'react-native-event-listeners';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -10,6 +10,7 @@ const LoginScreen = () => {
     try {
       await AsyncStorage.setItem('userId', userId);
       console.log(userId);
+      EventRegister.emit('userIdChanged');
       navigation.navigate('TabNavigator');
     } catch (error) {
       console.error('Error saving user ID to local storage:', error);

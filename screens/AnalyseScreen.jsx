@@ -7,18 +7,11 @@ import ShowAnalyse from "../components/ShowAnalyse";
 import Icon from "react-native-vector-icons/FontAwesome";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { EventRegister } from 'react-native-event-listeners';
 
 const AnalyseScreen = () => {
 
   const navigation = useNavigation();
-
-  function formatDateToDash(dateString) {
-    const parts = dateString.split('/');
-    const formattedDate = `${parts[0]}-${parts[1]}-${parts[2]}`;
-    
-    return formattedDate;
-  }
-  
   
   const formatDate = (date) => {
     const year = date.getFullYear();
@@ -75,9 +68,18 @@ const AnalyseScreen = () => {
         console.error('Error retrieving user ID from local storage:', error);
       }
     };
-
+  
     getUserId();
-  }, []);
+    const listener = EventRegister.addEventListener('userIdChanged', () => {
+      getUserId();
+    });
+
+    // Clean up listener on component unmount
+    return () => {
+      EventRegister.removeEventListener(listener);
+    };
+  }, []); 
+  
   
   const getTotalDepenses = () => {
     const dateStartObj = new Date(selectedDate);
@@ -140,6 +142,7 @@ const AnalyseScreen = () => {
 
 
 const getTotalExchange = () => {
+
   const dateStartObj = new Date(selectedDate);
   const dateEndObj = new Date(selectedEndDate);
 
@@ -151,9 +154,9 @@ const getTotalExchange = () => {
         const exchangeDate = new Date(exchange.data().date.seconds * 1000)
         if(dateStartObj.toISOString().split("T")[0] <= exchangeDate.toISOString().split("T")[0] &&  exchangeDate.toISOString().split("T")[0]  <= dateEndObj.toISOString().split("T")[0]){
             if(exchange.data().type === 'taking'){
-              totalExchange += exchange.data().spend;
+              totalExchange += Number(exchange.data().spend);
             }else if(exchange.data().type === 'giving'){
-              totalExchange -= exchange.data().spend;
+              totalExchange -= Number(exchange.data().spend);
             }
         }
         setTotalExchange(totalExchange);
@@ -164,15 +167,15 @@ const getTotalExchange = () => {
 
 
 
+  const fetchInitialData = async () => {
+    console.log("fun " + userId);
+    await Promise.all([getTotalDepenses(), getTotalRevenus(), getTotalEmployes(), getTotalExchange()]);
+  };
 
-useEffect(() => {
-  if (userId) {
-    const fetchInitialData = async () => {
-      await Promise.all([getTotalDepenses(), getTotalRevenus(), getTotalEmployes(), getTotalExchange()]);
-    };
+  useEffect(() => {
+    console.log('effect ' + userId);
     fetchInitialData();
-  }
-}, [userId, selectedDate, selectedEndDate]);
+  },[userId, selectedDate, selectedEndDate]);
 
   return (
     <View style={styles.container}>

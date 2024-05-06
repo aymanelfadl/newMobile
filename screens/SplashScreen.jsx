@@ -11,7 +11,7 @@ const SplashScreen = ({ navigation }) => {
           if(userId === null) {
             navigation.replace("Login")
           }else{
-            navigation.replace("TabNavigator")
+            navigation.replace("TabNavigator");
           }
         } catch (err) {
           console.log("Checking login err: " + err);
