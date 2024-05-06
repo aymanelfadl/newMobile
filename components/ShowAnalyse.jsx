@@ -1,11 +1,12 @@
 import React from "react";
-import { View, StyleSheet, Image, Text } from "react-native";
+import { View, StyleSheet, Image, Text, ScrollView } from "react-native";
 import TotalIcon from "../assets/up-and-down-arrows.png";
 import IncomeIcon from "../assets/passive-income.png";
 import EmployeeExpenseIcon from "../assets/career.png";
 import DepenseIcon from "../assets/depenser-de-largent.png"
+import ExchangeIcon from "../assets/exchanging.png"
 
-const ShowAnalyse = ({ total, totalEmp, totalDepense, totalRevenu, dateSelcted }) => {
+const ShowAnalyse = ({ total, totalEmp, totalDepense, totalRevenu, totalExchenge }) => {
   
   const renderLabels = () => {
     const labels = [
@@ -28,6 +29,11 @@ const ShowAnalyse = ({ total, totalEmp, totalDepense, totalRevenu, dateSelcted }
           title: "Total Dépense de l'employé",
           description: totalEmp,
           icon: EmployeeExpenseIcon,
+        },
+        {
+          title: "Total Échanges",
+          description: totalExchenge,
+          icon: ExchangeIcon,
         },
       ];
       
@@ -52,9 +58,13 @@ const ShowAnalyse = ({ total, totalEmp, totalDepense, totalRevenu, dateSelcted }
     ));
   };
 
-  return( <View style={styles.mainContainer}>
-    {renderLabels()}
-    </View>);
+  return(
+    <ScrollView>
+      <View style={styles.mainContainer}>
+        {renderLabels()}
+      </View>
+    </ScrollView>
+  );
 };
 
 const styles = StyleSheet.create({

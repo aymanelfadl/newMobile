@@ -1,45 +1,68 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, TextInput, TouchableOpacity, StyleSheet, Modal, FlatList, ScrollView } from "react-native";
-import Icon from "react-native-vector-icons/EvilIcons";
+import Icon from "react-native-vector-icons/FontAwesome6";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from "@react-native-firebase/firestore";
 
 const ExchangeScreen = () => {
-    const [name, setName] = useState('');
     const [spend, setSpend] = useState('');
     const [items, setItems] = useState([]);
     const [deleteIndex, setDeleteIndex] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
-    const [suggestions, setSuggestions] = useState(["Azize ", "Abdletife"]);
+    const [typeExchange, setTypeExchange] = useState("");
+    const [userId, setUserId] = useState(null);
 
-    useEffect(() => {
-        const unsubscribe = firestore().collection("ExchangeCollection")
+
+    const getUserId = async () => {
+        try {
+            const storedUserId = await AsyncStorage.getItem('userId');
+            if (storedUserId !== null) {
+                setUserId(storedUserId);
+            }
+        } catch (error) {
+            console.error('Error retrieving user ID from local storage:', error);
+        }
+    };
+    
+    const fetchExchangeData = (userId) => {
+        const unsubscribe = firestore().collection(`Users/${userId}/ExchangeCollection`)
             .onSnapshot((querySnapshot) => {
-                const itemsArray = [];
-                querySnapshot.forEach((doc) => {
-                    itemsArray.push({
-                        id: doc.id,
-                        name: doc.data().name,
-                        spend: doc.data().spend,
-                        date: doc.data().date.toDate(),
-                    });
-                });
+                const itemsArray = querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    name: doc.data().name,
+                    spend: doc.data().spend,
+                    type: doc.data().type,
+                    date: doc.data().date.toDate(),
+                }));
                 setItems(itemsArray);
             });
-
-        return () => unsubscribe();
+        return unsubscribe;
+    };
+    
+    useEffect(() => {
+        getUserId();
     }, []);
+    
+    useEffect(() => {
+        if (userId) {
+            const unsubscribe = fetchExchangeData(userId);
+            return () => unsubscribe();
+        }
+    }, [userId]);
+    
 
     const handleAdd = async () => {
         const newItem = {
-            name: name,
+            name:  userId === '1' ? 'Abdltif' : 'Azize',
             spend: spend,
+            type: typeExchange,
             date: new Date(),
         };
-
         try {
-            await firestore().collection("ExchangeCollection").add(newItem);
+            await firestore().collection(`Users/${userId}/ExchangeCollection`).add(newItem);
             setSpend('');
+            setTypeExchange("");
         } catch (error) {
             console.error("Error adding document: ", error);
         }
@@ -52,8 +75,7 @@ const ExchangeScreen = () => {
 
     const handleConfirmDelete = async () => {
         try {
-            await firestore().collection("ExchangeCollection").doc(items[deleteIndex].id).delete();
-
+            await firestore().collection(`Users/${userId}/ExchangeCollection` ).doc(items[deleteIndex].id).delete();
             const updatedItems = [...items];
             updatedItems.splice(deleteIndex, 1);
             setItems(updatedItems);
@@ -67,24 +89,34 @@ const ExchangeScreen = () => {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
-        return `${day}-${month}-${year}`;
+        return `${year}-${month}-${day}`;
     };
 
     const renderItems = () => {
         return items.map((item, index) => (
             <TouchableOpacity 
                 key={index} 
-                onPress={() => setSelectedItem(item.name)} 
                 onLongPress={() => handleDelete(index)} 
             >
-                <View style={[styles.itemContainer, selectedItem === item.name && { backgroundColor: "crimson" }]}>
+                <View style={[styles.itemContainer,{backgroundColor: item.type === 'taking' ? "green" : "red"} ]}>
                     <View style={[styles.iconContainer]}>
-                        <Icon name="plus" size={24} color={selectedItem === item.name ? "white" : "black"} />
+                        {item.type === 'taking' ? 
+                            <Icon name="plus" size={24} color="green"/>
+                        :
+                            <Icon name="minus"  size={24} color="red"/>
+                    }
                     </View>
                     <View style={styles.itemTextContainer}>
-                        <Text style={[{ fontSize: 16, lineHeight: 24 }, selectedItem === item.name && { color: "white" },selectedItem === item.name ? { color: "white" } : { color: "black" }]}>
-                            {item.name} m'a pris {item.spend} MAD le {formatDate(item.date)}.
+                    {item.type === "taking" ? 
+                        <Text style={{color:"white"}}>
+                            j'ai pris {item.spend} MAD à {item.name} le {formatDate(item.date)}.
                         </Text>
+                     : 
+                        <Text style={{color:"white"}}>
+                            je donne {item.spend} MAD à {item.name} le {formatDate(item.date)}. 
+                        </Text>
+                    }
+
                     </View>
                 </View>
             </TouchableOpacity>
@@ -95,28 +127,12 @@ const ExchangeScreen = () => {
     return (
         <View style={styles.mainContainer}>
             <View style={styles.firstContainer}>
-                <FlatList
-                    data={suggestions}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => {
-                            setSpend('');
-                            setSelectedItem(item);
-                            setName(item);
-                        }}>
-                            <Text style={{
-                                backgroundColor: selectedItem === item ? "crimson" : "white",
-                                color: selectedItem === item ? "white" : "black",
-                                alignSelf: "center",
-                                marginVertical: 4,
-                                paddingHorizontal: 12,
-                                paddingVertical: 8,
-                                borderRadius: 10,
-                            }}>{item}</Text>
-                        </TouchableOpacity>
-                    )}
-                    keyExtractor={(item) => item}
-                />
-
+                <TouchableOpacity style={{borderWidth:1,borderRadius:100,borderColor:"crimson" , padding:4 ,marginRight:10, backgroundColor:typeExchange === "taking" ? "green" : "white"}} onPress={()=>setTypeExchange("taking")}>
+                    <Icon name="plus"  size={24} color={typeExchange === "taking" ? "white" : "black"} />
+                </TouchableOpacity>
+                <TouchableOpacity style={{borderWidth:1,borderRadius:100,borderColor:"crimson" ,marginRight:10,padding:4 ,backgroundColor:typeExchange === "giving" ? "red" : "white"}} onPress={()=>setTypeExchange("giving")}>
+                    <Icon name="minus"  size={24} color={typeExchange === "giving" ? "white" : "black"} />
+                </TouchableOpacity>
                 <TextInput
                     onChangeText={(data) => setSpend(data)}
                     value={spend}
@@ -125,9 +141,6 @@ const ExchangeScreen = () => {
                     style={styles.input}
                     keyboardType="numeric"
                 />
-                <View style={styles.iconContainer}>
-                    <Icon name="arrow-right" size={24} color="black" />
-                </View>
                 <TouchableOpacity onPress={handleAdd} style={styles.addButton}>
                     <Text style={styles.addButtonText}>Ajouter</Text>
                 </TouchableOpacity>
@@ -235,8 +248,10 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     iconContainer: {
+        backgroundColor:"rgb(229 231 235)",
+        padding:2,
+        borderRadius:8,
         marginRight: 10,
-        color: "black",
     },
     itemTextContainer: {
         flex: 1,

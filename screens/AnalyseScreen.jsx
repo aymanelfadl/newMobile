@@ -30,6 +30,7 @@ const AnalyseScreen = () => {
   const [totalDepense, setTotalDepense] = useState(0);
   const [totalRevenu, setTotalRevenu] = useState(0);
   const [totalDepenseEmp, setTotalDepenseEmp] = useState(0);
+  const [totalExchange , setTotalExchange] = useState(0);
   const [selectedDate, setSelectedDate] = useState(formatDate(new Date()));
   const [selectedEndDate, setSelectedEndDate] = useState(formatDate(new Date()));
   const [userId, setUserId] = useState(null);
@@ -138,18 +139,41 @@ const AnalyseScreen = () => {
 };
 
 
+const getTotalExchange = () => {
+  const dateStartObj = new Date(selectedDate);
+  const dateEndObj = new Date(selectedEndDate);
+
+  const unsubscribe = firestore()
+    .collection(`Users/${userId}/ExchangeCollection`)
+    .onSnapshot(snapshot => {
+      let totalExchange = 0;
+      snapshot.forEach(exchange => {
+        const exchangeDate = new Date(exchange.data().date.seconds * 1000)
+        if(dateStartObj.toISOString().split("T")[0] <= exchangeDate.toISOString().split("T")[0] &&  exchangeDate.toISOString().split("T")[0]  <= dateEndObj.toISOString().split("T")[0]){
+            if(exchange.data().type === 'taking'){
+              totalExchange += exchange.data().spend;
+            }else if(exchange.data().type === 'giving'){
+              totalExchange -= exchange.data().spend;
+            }
+        }
+        setTotalExchange(totalExchange);
+      });
+})
+  return unsubscribe;
+};
 
 
-  useEffect(() => {
-    if(userId){
+
+
+useEffect(() => {
+  if (userId) {
     const fetchInitialData = async () => {
-        await Promise.all([getTotalDepenses(), getTotalRevenus(), getTotalEmployes()]);
+      await Promise.all([getTotalDepenses(), getTotalRevenus(), getTotalEmployes(), getTotalExchange()]);
     };
     fetchInitialData();
-    }
-  }, [userId,selectedDate,selectedEndDate]); 
+  }
+}, [userId, selectedDate, selectedEndDate]);
 
-  
   return (
     <View style={styles.container}>
       <Header title={"Analyse"} MyIcon={"chevron-double-left"} dateSelcted={selectedDate} endDate={selectedEndDate} onIconPress={()=>navigation.navigate("Échange")}/>
@@ -158,6 +182,7 @@ const AnalyseScreen = () => {
         totalDepense={totalDepense}
         totalRevenu={totalRevenu}
         totalEmp={totalDepenseEmp}
+        totalExchenge={totalExchange}
       />
       
       <View style={styles.button}>
@@ -205,18 +230,18 @@ const styles = StyleSheet.create({
   },
   buttonStartDate: {
     position: 'absolute',
-    bottom: 130,
+    bottom: 70,
     backgroundColor: 'rgb(225 29 72)',
     width: 50,
     height: 50,
     borderRadius: 100,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation : 5
+    elevation : 5 
   },
   buttonEndDate: {
     position: 'absolute',
-    bottom: 70,
+    bottom: 130,
     backgroundColor: 'rgb(225 29 72)',
     width: 50,
     height: 50,
