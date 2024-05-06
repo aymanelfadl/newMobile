@@ -13,8 +13,8 @@ const Header = ({ title, onSearching, MyIcon , onIconPress , dateSelcted, endDat
           <Text style={styles.title}>{title}</Text>
             {dateSelcted && (
               <View style={styles.dateContainer}>
-                <Text style={{color:"white",fontSize:12,}}>
-                  From {dateSelcted} To {endDate}
+                <Text style={{color:"white",fontSize:12,fontWeight:"bold"}}>
+                    {dateSelcted} à {endDate}
                 </Text>      
               </View>
             )}
@@ -30,7 +30,6 @@ const Header = ({ title, onSearching, MyIcon , onIconPress , dateSelcted, endDat
           </TouchableOpacity>
         </View>
       )}
-      
       {openSearch && (
         <View style={styles.searchContainer}>
           <TextInput
@@ -74,8 +73,7 @@ const styles = StyleSheet.create({
     flexDirection:"row",
     justifyContent:"center",
     borderRadius:100,
-    paddingHorizontal:4,
-    width:"60%",
+    width:"50%",
     backgroundColor:"crimson" 
   },
   title: {
