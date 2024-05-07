@@ -127,8 +127,8 @@ const AnalyseScreen = () => {
                     totalEmployes -= doc.data().spends; 
                 }
             });
+            setTotalDepenseEmp(totalEmployes);
           });
-          setTotalDepenseEmp(totalEmployes);
     });
 
     return unsubscribe;
