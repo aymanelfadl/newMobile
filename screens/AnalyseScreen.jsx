@@ -32,9 +32,7 @@ const AnalyseScreen = () => {
   const [showOptions, setShowOptions] = useState(false);
   
   const onChangeStartDate = (event, selectedDate) => {
-    const currentDate = selectedDate
-    console.log(selectedDate);
-    setSelectedDate(formatDate(currentDate));
+    setSelectedDate(formatDate(selectedDate));
     setShowStartDate(false);
   };
 
@@ -43,8 +41,7 @@ const AnalyseScreen = () => {
   };
 
   const onChangeEndDate = (event, selectedDate) => {
-    const currentDate = selectedDate
-    setSelectedEndDate(formatDate(currentDate));
+    setSelectedEndDate(formatDate(selectedDate));
     setShowEndDate(false);
   };
 
@@ -73,8 +70,6 @@ const AnalyseScreen = () => {
     const listener = EventRegister.addEventListener('userIdChanged', () => {
       getUserId();
     });
-
-    // Clean up listener on component unmount
     return () => {
       EventRegister.removeEventListener(listener);
     };
@@ -122,19 +117,18 @@ const AnalyseScreen = () => {
   const getTotalEmployes = () => {
     const unsubscribe = firestore().collection(`Users/${userId}/EmployesCollection`).onSnapshot(querySnapshot => {
         let totalEmployes = 0;
-
-        querySnapshot.forEach(async employeeDoc => {
+        querySnapshot.forEach(
+          async employeeDoc => {
             let dateStartObj = new Date(selectedDate);
             let dateEndObj = new Date(selectedEndDate);
-            
             const spendSnapshot = await employeeDoc.ref.collection('SpendModifications').get();
             spendSnapshot.forEach(doc => {
                 if (dateStartObj.toISOString().split("T")[0] <= doc.data().dateAdded && doc.data().dateAdded <= dateEndObj.toISOString().split("T")[0]) {
                     totalEmployes -= doc.data().spends; 
                 }
             });
-            setTotalDepenseEmp(totalEmployes);
           });
+          setTotalDepenseEmp(totalEmployes);
     });
 
     return unsubscribe;
@@ -166,14 +160,11 @@ const getTotalExchange = () => {
 };
 
 
-
   const fetchInitialData = async () => {
-    console.log("fun " + userId);
     await Promise.all([getTotalDepenses(), getTotalRevenus(), getTotalEmployes(), getTotalExchange()]);
   };
 
   useEffect(() => {
-    console.log('effect ' + userId);
     fetchInitialData();
   },[userId, selectedDate, selectedEndDate]);
 

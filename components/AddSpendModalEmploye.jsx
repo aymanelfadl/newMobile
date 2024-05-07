@@ -1,21 +1,40 @@
-import React, { useState , useEffect} from 'react';
+import { useState , useEffect} from 'react';
 import { View, Modal, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import Icon from "react-native-vector-icons/FontAwesome"
-import DatePicker from 'react-native-date-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Progress from 'react-native-progress';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const AddSpendModalEmploye = ({ visible, employee, onClose }) => {
-   
+    
+    const formatDate = (date) =>{
+        const currentDate = date;
+            const day = currentDate.getDate().toString().padStart(2, '0');
+            const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+            const year = currentDate.getFullYear().toString();
+            return `${year}-${month}-${day}`
+    }
+    
     const [spends, setSpends] = useState('');
-    const [selectedDate, setSelectedDate] = useState(new Date()); 
+    const [selectedDate, setSelectedDate] = useState(formatDate(new Date())); 
     const [isUploading , setIsUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [dots, setDots] = useState('');
-    const [isDateModalOpen, setIsDateModalOpen] = useState(false);
     const [userId, setUserId] = useState(null);
+    const [showDate , setShowDate] = useState(false);
+
+
+    const onChangeDate = (event, selectedDate) => {
+        setSelectedDate(formatDate(selectedDate));
+        setShowDate(false);
+      };
+    
+      const showModeDate = () => {
+        setShowDate(true); 
+      };
+
 
     useEffect(() => {
     const getUserId = async () => {
@@ -55,34 +74,23 @@ const AddSpendModalEmploye = ({ visible, employee, onClose }) => {
         });
     };
 
-    const formatDate = (date) =>{
-        const currentDate = date;
-            const day = currentDate.getDate().toString().padStart(2, '0');
-            const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-            const year = currentDate.getFullYear().toString();
-            return `${year}-${month}-${day}`
-    }
 
-    const handleCalendarPress = () => {
-        setIsDateModalOpen(true);
-    }
-    
     const handleSpendAmount = async () => {
         setIsUploading(true);
         onClose();
         try {
             setUploadProgress(0);
+          
             const employeeDoc = await firestore().collection(`Users/${userId}/EmployesCollection`).doc(employee.id).get();
+            
             const currentSpends = employeeDoc.data().spends;
             const spendsToAdd = Number(spends);
-    
-            const formattedDate = formatDate(selectedDate);
-    
+            const formattedDate = selectedDate;
+
             setUploadProgress(0.5);
 
             let totalSpends = isNaN(spendsToAdd) ? currentSpends : spendsToAdd + currentSpends;
-    
-            
+                
             await firestore().collection(`Users/${userId}/EmployesCollection`).doc(employee.id).update({
                 spends: totalSpends,
                 dateAdded: formattedDate,
@@ -90,52 +98,23 @@ const AddSpendModalEmploye = ({ visible, employee, onClose }) => {
             });
     
 
-            const spendModificationRef = await firestore().collection(`Users/${userId}/EmployesCollection`).doc(employee.id).collection('SpendModifications').add({
+            await firestore().collection(`Users/${userId}/EmployesCollection`).doc(employee.id).collection('SpendModifications').add({
                 spends: spendsToAdd, 
                 dateAdded: formattedDate,
                 timestamp: new Date(),
             });
-    
 
-            const logData = {
-                Id: employee.id,
-                type: "Employe",
-                operation: "Les dépenses de l'employé " + employee.description + " ont été mises à jour, il a pris " + spendsToAdd,
-                timestamp: selectedDate,
-                newSpends: spendsToAdd,
-                spendModificationId: spendModificationRef.id, 
-            };
-            await firestore().collection('changeLogs').add(logData);
-    
             setUploadProgress(1);
             setSpends("");
-            setSelectedDate(new Date());
+            setSelectedDate(formatDate(new Date()));
             setIsUploading(false);
             onClose();
+            
         } catch (error) {
             console.error('Error updating spends:', error);
         }
     }
-    
-    const DateModal = () =>{
-        return (
-              <DatePicker
-                modal
-                mode='date'
-                them="light"
-                open={isDateModalOpen}
-                date={selectedDate}
-                onConfirm={(selectedDate) => {
-                  setIsDateModalOpen(false)
-                  setSelectedDate(selectedDate)
-                }}
-                onCancel={() => {
-                  setIsDateModalOpen(false)
-                }}
-              />
-          )
-    }
-    
+
     return (
         <>
             {!isUploading &&
@@ -149,13 +128,13 @@ const AddSpendModalEmploye = ({ visible, employee, onClose }) => {
                         <View style={styles.modalContent}>
                             <View style={styles.modalHeader}>
                                 <Text style={styles.title}>Dépenses</Text>
-                                <TouchableOpacity onPress={handleCalendarPress} style={{padding:4, marginTop:10}} >
+                                <TouchableOpacity onPress={showModeDate} style={{padding:4, marginTop:10}} >
                                     <Icon name="calendar-plus-o" color="crimson"  size={30}></Icon>
                                 </TouchableOpacity>
                             </View>
-                            <DateModal />
+                                {showDate && <DateTimePicker testID='dateTimePicker' value={new Date()} onChange={onChangeDate} />}
                             <View>
-                                <Text style={styles.textDate}>{formatDate(selectedDate)}</Text>
+                                <Text style={styles.textDate}>{selectedDate}</Text>
                             </View>
                             <TextInput
                                 style={styles.input}
