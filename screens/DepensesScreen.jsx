@@ -47,7 +47,6 @@ useEffect(() => {
           timestamp: data.timestamp.toDate(),
           isAudioPlaying: false,
         };
-        console.log(item);
         fetchedItems.push(item);
       });
       fetchedItems.sort((a, b) => b.timestamp - a.timestamp);
