@@ -5,14 +5,25 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import AudioRecord from 'react-native-audio-record';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import Sound from 'react-native-sound';
 import * as Progress from 'react-native-progress';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const AddSpendModalRevenu = ({ visible, onClose }) => {
+
+  const formatDate = (date) =>{
+    const currentDate = date;
+        const day = currentDate.getDate().toString().padStart(2, '0');
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        const year = currentDate.getFullYear().toString();
+        return `${year}-${month}-${day}`
+}
+
   const [description, setDescription] = useState('');
   const [spends, setSpends] = useState('');
+  const [selectedDate, setSelectedDate] = useState(formatDate(new Date())); 
   const [thumbnail, setThumbnail] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [uploadType, setUploadType] = useState(null);
@@ -24,6 +35,7 @@ const AddSpendModalRevenu = ({ visible, onClose }) => {
   const [dots, setDots] = useState('');
   const [suggestionss , setSuggestions] = useState([]);
   const [userId, setUserId] = useState(null);
+  const [showDate , setShowDate] = useState(false);
 
 
   useEffect(() => {
@@ -64,6 +76,15 @@ const AddSpendModalRevenu = ({ visible, onClose }) => {
       console.warn(err);
     }
   };
+  const onChangeDate = (event, selectedDate) => {
+    setSelectedDate(formatDate(selectedDate));
+    setShowDate(false);
+  };
+
+  const showModeDate = () => {
+    setShowDate(true); 
+  };
+
 
   const fetchSuggestions = () => {
     const unsubscribe = firestore().collection(`Users/${userId}/RevenusCollection`).onSnapshot(snapshot => {
@@ -104,14 +125,6 @@ const AddSpendModalRevenu = ({ visible, onClose }) => {
 
     return () => clearInterval(intervalId);
   }, [isUploading]);
-
-  const formatDate = (date) =>{
-    const currentDate = date;
-        const day = currentDate.getDate().toString().padStart(2, '0');
-        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-        const year = currentDate.getFullYear().toString();
-        return `${year}-${month}-${day}`
-}
 
   const handleLaunchCamera = () => {
     launchCamera({ mediaType: 'photo' }, (response) => {
@@ -248,23 +261,16 @@ const AddSpendModalRevenu = ({ visible, onClose }) => {
       
       setUploadProgress(0.50);
 
-      const depenseRef = await firestore().collection(`Users/${userId}/RevenusCollection`).add({
+       await firestore().collection(`Users/${userId}/RevenusCollection`).add({
         description: finalDescription,
         thumbnail: mediaUrl,
         thumbnailType: uploadType === null ? "image" : uploadType,
         spends: spends === '' ? 0 : spends,
-        dateAdded: formatDate(new Date()),
+        dateAdded: selectedDate,
         timestamp: new Date(),
       });
 
       setUploadProgress(0.75);
-
-      await firestore().collection('changeLogs').add({
-        Id: depenseRef.id,
-        operation: `Un nouveau revenu, ${finalDescription} de ${spends} MAD a été ajouté`,
-        type: "Revenu",
-        timestamp: new Date(),
-      });
 
       setUploadProgress(1);
       setAudioFile(null),
@@ -321,7 +327,14 @@ const AddSpendModalRevenu = ({ visible, onClose }) => {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.title}>Nouveau Revenu</Text>
+             <View  style={{flexDirection:"row" , justifyContent:"space-between", alignItems: 'center',}}>
+                <Text style={styles.title}>Nouveau Revenu</Text>
+                <TouchableOpacity onPress={showModeDate} style={{paddingLeft:"6%"}} >
+                  <Icon name="calendar-plus-o" color="crimson"  size={30}></Icon>
+                </TouchableOpacity>
+             </View>
+                {showDate && <DateTimePicker testID='dateTimePicker' value={new Date()} onChange={onChangeDate} />}
+             
               {audioFile && (
                 <View>
                   {isAudioPlaying ? (
@@ -441,9 +454,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 25,
-    marginBottom: 15,
     fontWeight: '600',
-    textAlign: "center",
     color: "rgb(38 38 38)"
   },
   iconContainer: {
