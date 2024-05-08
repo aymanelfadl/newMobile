@@ -1,4 +1,4 @@
-import React, {useState } from "react";
+import React, {useEffect, useState } from "react";
 import { TouchableOpacity, View, StyleSheet, Image, Text } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Header from "./Header";
@@ -7,12 +7,16 @@ import IncomeIcon from "../assets/income.png";
 import EmployeeExpenseIcon from "../assets/recruitment.png";
 import AddSpendModalDepenses from "./AddSpendModalDepenses";
 import AddSpendModalRevenu from "./AddSpendModalRevenu";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { EventRegister } from 'react-native-event-listeners';
+
 
 
 const AddItemBtn = () => {
-
   const [openDepenseModal, setOpenDepenseModal]= useState(false);
   const [openRevenuModal, setOpenRevenuModal]= useState(false);
+  const [userName , setUsername] = useState(''); 
+  const [userId, setUserId] = useState(null);
   
   const notificationIconName =  'account-switch';
 
@@ -25,7 +29,26 @@ const AddItemBtn = () => {
     { title:"Dépense pour Employé", description: "Enregistrer une dépense pour un employé", onPress: () => navigation.navigate('Employé'), backgroundColor: "rgb(55 65 81)", icon: EmployeeExpenseIcon }, // Dark magenta
   ]; 
   
-  
+
+  useEffect(() => {
+    const getUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem('userId');
+        if (storedUserId !== null) {
+          setUserId(storedUserId);
+        }
+      } catch (error) {
+        console.error('Error retrieving user ID from local storage:', error);
+      }
+    };
+    getUserId();
+    const listener = EventRegister.addEventListener('userIdChanged', () => {
+      getUserId();
+    });
+    return () => {
+      EventRegister.removeEventListener(listener);
+    };
+  }, []); 
   const renderButtons = () => {
     return DataBtns.map((btnData, index) => (
       <View key={index}>
@@ -48,7 +71,7 @@ const AddItemBtn = () => {
   
   return (
     <View style={styles.mainContainer}>
-      <Header title={"Accueil"} MyIcon={notificationIconName} onIconPress={()=> {navigation.navigate("Login")}}/>
+      <Header title={userId === '1' ? "Bienvenue Azize" : "Bienvenue Abdltife"} MyIcon={notificationIconName} onIconPress={()=> {navigation.navigate("Login")}}/>
       {renderButtons()}
       <AddSpendModalDepenses visible={openDepenseModal} onClose={() =>{setOpenDepenseModal(false)}} />
       <AddSpendModalRevenu visible={openRevenuModal} onClose={() =>{setOpenRevenuModal(false)}} />      
