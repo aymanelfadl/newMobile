@@ -54,7 +54,7 @@ const ExchangeScreen = () => {
 
     const handleAdd = async () => {
         const newItem = {
-            name:  userId === '1' ? 'Abdltif' : 'Azize',
+            name:  userId === '1' ? 'Abdellatif' : 'Abdelaziz',
             spend: spend,
             type: typeExchange,
             date: new Date(),

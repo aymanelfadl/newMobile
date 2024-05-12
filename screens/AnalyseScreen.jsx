@@ -161,7 +161,7 @@ const getTotalExchange = () => {
 
 
   const fetchInitialData = async () => {
-    await Promise.all([getTotalDepenses(), getTotalRevenus(), getTotalEmployes(), getTotalExchange()]);
+    await Promise.all([ getTotalDepenses() , getTotalRevenus(), getTotalEmployes(), getTotalExchange()]);
   };
 
   useEffect(() => {
@@ -186,10 +186,10 @@ const getTotalExchange = () => {
         {showOptions &&
          <>
             <TouchableOpacity style={styles.buttonEndDate} onPress={showModeStartDate}>
-              <Text><Icon name="calendar-plus-o" size={20} color="white" /></Text>
+              <Text style={{color:"white"}}>Début</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.buttonStartDate} onPress={showModeEndDate}>
-              <Text><Icon name="calendar-minus-o" size={20} color="white" /></Text>
+              <Text style={{color:"white"}}>Fin</Text>
             </TouchableOpacity>
           </>
         }

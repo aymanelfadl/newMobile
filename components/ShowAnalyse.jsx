@@ -21,17 +21,17 @@ const ShowAnalyse = ({ total, totalEmp, totalDepense, totalRevenu, totalExchenge
           icon: DepenseIcon,
         },
         {
-          title: "Total Revenu",
+          title: "Total Gains",
           description: totalRevenu,
           icon: IncomeIcon,
         },
         {
-          title: "Total Dépense de l'employé",
+          title: "Total des Frais du Personnel",
           description: totalEmp,
           icon: EmployeeExpenseIcon,
         },
         {
-          title: "Total Échanges",
+          title: "Total des Échanges",
           description: totalExchenge,
           icon: ExchangeIcon,
         },

@@ -15,7 +15,6 @@ import { EventRegister } from 'react-native-event-listeners';
 const AddItemBtn = () => {
   const [openDepenseModal, setOpenDepenseModal]= useState(false);
   const [openRevenuModal, setOpenRevenuModal]= useState(false);
-  const [userName , setUsername] = useState(''); 
   const [userId, setUserId] = useState(null);
   
   const notificationIconName =  'account-switch';
@@ -71,7 +70,7 @@ const AddItemBtn = () => {
   
   return (
     <View style={styles.mainContainer}>
-      <Header title={userId === '1' ? "Bienvenue Azize" : "Bienvenue Abdltife"} MyIcon={notificationIconName} onIconPress={()=> {navigation.navigate("Login")}}/>
+      <Header title={userId === '1' ? "Bienvenue Abdelaziz" : "Bienvenue Abdellatif"} MyIcon={notificationIconName} onIconPress={()=> {navigation.navigate("Login")}}/>
       {renderButtons()}
       <AddSpendModalDepenses visible={openDepenseModal} onClose={() =>{setOpenDepenseModal(false)}} />
       <AddSpendModalRevenu visible={openRevenuModal} onClose={() =>{setOpenRevenuModal(false)}} />      
