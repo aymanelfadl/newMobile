@@ -8,22 +8,31 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { EventRegister } from 'react-native-event-listeners';
 
 const AnalyseScreen = () => {
-
-
-  
+ 
   const formatDate = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
+
+  const getFirstDayOfCurrentMonth = () => {
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), 1);
+  };
   
+  const getLastDayOfCurrentMonth = () => {
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth() + 1, 0);
+  };
+  
+
   const [totalDepense, setTotalDepense] = useState(0);
   const [totalRevenu, setTotalRevenu] = useState(0);
   const [totalDepenseEmp, setTotalDepenseEmp] = useState(0);
   const [totalExchange , setTotalExchange] = useState(0);
-  const [selectedDate, setSelectedDate] = useState(formatDate(new Date()));
-  const [selectedEndDate, setSelectedEndDate] = useState(formatDate(new Date()));
+  const [selectedDate, setSelectedDate] = useState(formatDate(getFirstDayOfCurrentMonth()));
+  const [selectedEndDate, setSelectedEndDate] = useState(formatDate(getLastDayOfCurrentMonth()));
   const [userId, setUserId] = useState(null);
   const [showStartDate, setShowStartDate] = useState(false);
   const [showEndDate, setShowEndDate] = useState(false);
@@ -77,7 +86,6 @@ const AnalyseScreen = () => {
   const getTotalDepenses = () => {
     const dateStartObj = new Date(selectedDate);
     const dateEndObj = new Date(selectedEndDate);
-
     const unsubscribe = firestore()
       .collection(`Users/${userId}/DepensesCollection`)
       .onSnapshot(snapshot => {
@@ -167,13 +175,8 @@ const getTotalExchange = () => {
   },[userId, selectedDate, selectedEndDate]);
 
   return (
-    <View style={{flex:1, backgroundColor:"white"}}>
-
-      <Header title={"Analyse"} MyIcon={"calendar"} dateSelcted={selectedDate} endDate={selectedEndDate} onIconPress={toggleOptions}/>
-    <ScrollView>
-
-    <TouchableWithoutFeedback onPress={()=>setShowOptions(false)} >
     <View style={styles.container}>
+      <Header title={"Analyse"} MyIcon={"calendar"} dateSelcted={selectedDate} endDate={selectedEndDate} onIconPress={toggleOptions}/>
       <ShowAnalyse 
         total={Number(totalDepense + totalRevenu + totalDepenseEmp)}
         totalDepense={totalDepense}
@@ -194,10 +197,7 @@ const getTotalExchange = () => {
         }  
     
       {showStartDate && <DateTimePicker testID='dateTimePicker' value={new Date()} onChange={onChangeStartDate} />}
-      {showEndDate && <DateTimePicker testID='dateTimePicker' value={new Date()} onChange={onChangeEndDate} />}
-    </View>
-    </TouchableWithoutFeedback>
-    </ScrollView>
+      {showEndDate && <DateTimePicker testID='dateTimePicker' value={new Date()} onChange={onChangeEndDate} />} 
     </View>
   );
 }
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     elevation : 5
   },
   optionsContainer: {
-    bottom:"72%",
+    bottom:"62%",
     left:"83%",
   },
   buttonStartDate: {
