@@ -17,7 +17,7 @@ const AddItemBtn = () => {
   const [openRevenuModal, setOpenRevenuModal]= useState(false);
   const [userId, setUserId] = useState(null);
   
-  const notificationIconName =  'account-convert';
+  const notificationIconName =  'account-multiple-outline';
 
   const navigation = useNavigation(); 
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, ScrollView} from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import Header from "../components/Header";
 import ShowAnalyse from "../components/ShowAnalyse";
@@ -167,8 +167,13 @@ const getTotalExchange = () => {
   },[userId, selectedDate, selectedEndDate]);
 
   return (
-    <View style={styles.container}>
+    <View style={{flex:1, backgroundColor:"white"}}>
+
       <Header title={"Analyse"} MyIcon={"calendar"} dateSelcted={selectedDate} endDate={selectedEndDate} onIconPress={toggleOptions}/>
+    <ScrollView>
+
+    <TouchableWithoutFeedback onPress={()=>setShowOptions(false)} >
+    <View style={styles.container}>
       <ShowAnalyse 
         total={Number(totalDepense + totalRevenu + totalDepenseEmp)}
         totalDepense={totalDepense}
@@ -190,7 +195,9 @@ const getTotalExchange = () => {
     
       {showStartDate && <DateTimePicker testID='dateTimePicker' value={new Date()} onChange={onChangeStartDate} />}
       {showEndDate && <DateTimePicker testID='dateTimePicker' value={new Date()} onChange={onChangeEndDate} />}
-
+    </View>
+    </TouchableWithoutFeedback>
+    </ScrollView>
     </View>
   );
 }
@@ -215,8 +222,8 @@ const styles = StyleSheet.create({
     elevation : 5
   },
   optionsContainer: {
-    bottom:"62%",
-    left:"82%",
+    bottom:"72%",
+    left:"83%",
   },
   buttonStartDate: {
     position: 'absolute',
