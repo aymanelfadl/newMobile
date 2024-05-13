@@ -23,9 +23,9 @@ const AddItemBtn = () => {
 
 
   const DataBtns = [
-    { title:"Nouvelle Dépense", description: "Enregistrer une nouvelle dépense", onPress: () => setOpenDepenseModal(true), backgroundColor: "rgb(244 63 94)", icon: ExpenseIcon }, // Crimson
-    { title:"Nouveau Revenu", description: "Enregistrer un nouveau revenu", onPress: () => setOpenRevenuModal(true), backgroundColor: "rgb(14 165 233)", icon: IncomeIcon }, // Hot pink
-    { title:"Dépense pour Employé", description: "Enregistrer une dépense pour un employé", onPress: () => navigation.navigate('Employé'), backgroundColor: "rgb(55 65 81)", icon: EmployeeExpenseIcon }, // Dark magenta
+    { title:"Nouvelle Dépense", description: "Enregistrer une nouvelle dépense", onPress: () => setOpenDepenseModal(true), backgroundColor: "rgb(244 63 94)", icon: ExpenseIcon }, 
+    { title:"Nouveau Revenu", description: "Enregistrer un nouveau revenu", onPress: () => setOpenRevenuModal(true), backgroundColor: "rgb(14 165 233)", icon: IncomeIcon }, 
+    { title:"Dépense pour Employé", description: "Enregistrer une dépense pour un employé", onPress: () => navigation.navigate('Employé'), backgroundColor: "rgb(55 65 81)", icon: EmployeeExpenseIcon }, 
   ]; 
   
 
@@ -70,7 +70,7 @@ const AddItemBtn = () => {
   
   return (
     <View style={styles.mainContainer}>
-      <Header title={userId === '1' ? "Bienvenue Abdelaziz" : "Bienvenue Abdellatif"} MyIcon={notificationIconName} onIconPress={()=> {navigation.navigate("Login")}}/>
+      <Header title={userId === '1' ? "Bienvenue Abdelaziz" : "Bienvenue Abdellatif"} MyIcon={notificationIconName} mySecondIcon="swap-vertical" onIconPress={()=> {navigation.navigate("Login")}} onSecondIconPress={()=>{navigation.navigate("Échange")}} />
       {renderButtons()}
       <AddSpendModalDepenses visible={openDepenseModal} onClose={() =>{setOpenDepenseModal(false)}} />
       <AddSpendModalRevenu visible={openRevenuModal} onClose={() =>{setOpenRevenuModal(false)}} />      

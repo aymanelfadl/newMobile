@@ -170,7 +170,7 @@ const getTotalExchange = () => {
 
   return (
     <View style={styles.container}>
-      <Header title={"Analyse"} MyIcon={"chevron-double-left"} dateSelcted={selectedDate} endDate={selectedEndDate} onIconPress={()=>navigation.navigate("Échange")}/>
+      <Header title={"Analyse"} MyIcon={"calendar"} dateSelcted={selectedDate} endDate={selectedEndDate} onIconPress={toggleOptions}/>
       <ShowAnalyse 
         total={Number(totalDepense + totalRevenu + totalDepenseEmp)}
         totalDepense={totalDepense}
@@ -179,23 +179,17 @@ const getTotalExchange = () => {
         totalExchenge={totalExchange}
       />
       
-      <View style={styles.button}>
-        <TouchableOpacity onPress={toggleOptions} >
-          <Text><Icon name="calendar" size={30} color="white"></Icon></Text>
-        </TouchableOpacity>
         {showOptions &&
-         <>
+         <View style={styles.optionsContainer}>
             <TouchableOpacity style={styles.buttonEndDate} onPress={showModeStartDate}>
               <Text style={{color:"white"}}>Début</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.buttonStartDate} onPress={showModeEndDate}>
               <Text style={{color:"white"}}>Fin</Text>
             </TouchableOpacity>
-          </>
-        }
-        
-      </View>
-
+          </View>
+        }  
+    
       {showStartDate && <DateTimePicker testID='dateTimePicker' value={new Date()} onChange={onChangeStartDate} />}
       {showEndDate && <DateTimePicker testID='dateTimePicker' value={new Date()} onChange={onChangeEndDate} />}
 
@@ -221,6 +215,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     elevation : 5
+  },
+  optionsContainer: {
+    bottom:"63%",
+    left:"85%",
   },
   buttonStartDate: {
     position: 'absolute',

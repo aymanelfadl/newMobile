@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const Header = ({ title, onSearching, MyIcon , onIconPress , dateSelcted, endDate}) => {
+const Header = ({ title, onSearching, MyIcon , mySecondIcon, onIconPress, onSecondIconPress, dateSelcted, endDate}) => {
 
   const [openSearch, setOpenSearch] = useState(false);
   
@@ -18,9 +18,16 @@ const Header = ({ title, onSearching, MyIcon , onIconPress , dateSelcted, endDat
                 </Text>      
               </View>
             )}
-          <TouchableOpacity  style={{ paddingLeft: 6 }} onPress={onIconPress}>
-            <Icon name={MyIcon} size={30} color="crimson" />
-          </TouchableOpacity>
+          <View style={{flexDirection:"row"}}>
+            {mySecondIcon &&
+            <TouchableOpacity style={{marginRight:15}}onPress={onSecondIconPress}>
+              <Icon name={mySecondIcon} size={30} color="crimson" />
+            </TouchableOpacity>
+            }
+            <TouchableOpacity style={{marginRight:10}} onPress={onIconPress}>
+              <Icon name={MyIcon} size={30} color="crimson" />
+            </TouchableOpacity>
+          </View>
         </View>
       ) : (
         <View style={styles.titleContainer}>
