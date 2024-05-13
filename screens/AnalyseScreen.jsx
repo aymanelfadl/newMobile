@@ -215,8 +215,8 @@ const styles = StyleSheet.create({
     elevation : 5
   },
   optionsContainer: {
-    bottom:"63%",
-    left:"85%",
+    bottom:"62%",
+    left:"82%",
   },
   buttonStartDate: {
     position: 'absolute',

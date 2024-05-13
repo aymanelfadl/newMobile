@@ -17,7 +17,7 @@ const AddItemBtn = () => {
   const [openRevenuModal, setOpenRevenuModal]= useState(false);
   const [userId, setUserId] = useState(null);
   
-  const notificationIconName =  'account-switch';
+  const notificationIconName =  'account-convert';
 
   const navigation = useNavigation(); 
 
@@ -70,7 +70,7 @@ const AddItemBtn = () => {
   
   return (
     <View style={styles.mainContainer}>
-      <Header title={userId === '1' ? "Bienvenue Abdelaziz" : "Bienvenue Abdellatif"} MyIcon={notificationIconName} mySecondIcon="swap-vertical" onIconPress={()=> {navigation.navigate("Login")}} onSecondIconPress={()=>{navigation.navigate("Échange")}} />
+      <Header title={userId === '1' ? "Bienvenue Abdelaziz" : "Bienvenue Abdellatif"} MyIcon={notificationIconName} mySecondIcon="rotate-3d-variant" onIconPress={()=> {navigation.navigate("Login")}} onSecondIconPress={()=>{navigation.navigate("Échange")}} />
       {renderButtons()}
       <AddSpendModalDepenses visible={openDepenseModal} onClose={() =>{setOpenDepenseModal(false)}} />
       <AddSpendModalRevenu visible={openRevenuModal} onClose={() =>{setOpenRevenuModal(false)}} />      
