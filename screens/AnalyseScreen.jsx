@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, ScrollView} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity,} from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import Header from "../components/Header";
 import ShowAnalyse from "../components/ShowAnalyse";
