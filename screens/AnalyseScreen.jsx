@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity} from "react-native";
 import firestore from "@react-native-firebase/firestore";
-import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header";
 import ShowAnalyse from "../components/ShowAnalyse";
-import Icon from "react-native-vector-icons/FontAwesome";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { EventRegister } from 'react-native-event-listeners';
 
 const AnalyseScreen = () => {
 
-  const navigation = useNavigation();
+
   
   const formatDate = (date) => {
     const year = date.getFullYear();

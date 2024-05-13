@@ -1,15 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, TextInput, TouchableOpacity, StyleSheet, Modal, FlatList, ScrollView } from "react-native";
+import { Text, View, TextInput, TouchableOpacity, StyleSheet, Modal, ScrollView } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome6";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from "@react-native-firebase/firestore";
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 const ExchangeScreen = () => {
+
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
     const [spend, setSpend] = useState('');
     const [items, setItems] = useState([]);
     const [deleteIndex, setDeleteIndex] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
-    const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedDate, setSelectedDate] = useState(formatDate(new Date()));
+    const [showStartDate, setShowStartDate] = useState(false);
     const [typeExchange, setTypeExchange] = useState("");
     const [userId, setUserId] = useState(null);
 
@@ -33,7 +44,7 @@ const ExchangeScreen = () => {
                     name: doc.data().name,
                     spend: doc.data().spend,
                     type: doc.data().type,
-                    date: doc.data().date.toDate(),
+                    date: doc.data().date,
                 }));
                 setItems(itemsArray);
             });
@@ -50,6 +61,17 @@ const ExchangeScreen = () => {
             return () => unsubscribe();
         }
     }, [userId]);
+
+    const onChangeStartDate = (event, selectedDate) => {
+        setSelectedDate(formatDate(selectedDate));
+        console.log(selectedDate);
+        setShowStartDate(false);
+      };
+    
+      const showModeStartDate = () => {
+        setShowStartDate(true); 
+
+      };
     
 
     const handleAdd = async () => {
@@ -57,7 +79,7 @@ const ExchangeScreen = () => {
             name:  userId === '1' ? 'Abdellatif' : 'Abdelaziz',
             spend: spend,
             type: typeExchange,
-            date: new Date(),
+            date: selectedDate,
         };
         try {
             await firestore().collection(`Users/${userId}/ExchangeCollection`).add(newItem);
@@ -85,13 +107,6 @@ const ExchangeScreen = () => {
         }
     };
 
-    const formatDate = (date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    };
-
     const renderItems = () => {
         return items.map((item, index) => (
             <TouchableOpacity 
@@ -109,11 +124,11 @@ const ExchangeScreen = () => {
                     <View style={styles.itemTextContainer}>
                     {item.type === "taking" ? 
                         <Text style={{color:"white"}}>
-                            j'ai pris {item.spend} MAD à {item.name} le {formatDate(item.date)}.
+                            j'ai pris {item.spend} MAD à {item.name} le {item.date}.
                         </Text>
                      : 
                         <Text style={{color:"white"}}>
-                            je donne {item.spend} MAD à {item.name} le {formatDate(item.date)}. 
+                            je donne {item.spend} MAD à {item.name} le {item.date}. 
                         </Text>
                     }
 
@@ -141,9 +156,14 @@ const ExchangeScreen = () => {
                     style={styles.input}
                     keyboardType="numeric"
                 />
+                <TouchableOpacity onPress={showModeStartDate} style={{paddingHorizontal:6, marginRight:8,}}>
+                    <Icon name="calendar" size={30} color="crimson"/>
+                </TouchableOpacity>
                 <TouchableOpacity onPress={handleAdd} style={styles.addButton}>
                     <Text style={styles.addButtonText}>Ajouter</Text>
                 </TouchableOpacity>
+                
+                {showStartDate && <DateTimePicker testID='dateTimePicker' value={new Date()} onChange={onChangeStartDate} />}
             </View>
             <View style={{ backgroundColor: "crimson", height: 1, width: "100%" }}></View>
             <ScrollView style={styles.scrollView}>
@@ -184,6 +204,7 @@ const ExchangeScreen = () => {
                     </View>
                 </View>
             </Modal>
+
         </View>
     );
 }
