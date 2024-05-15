@@ -28,11 +28,12 @@ const SignUpScreen = () => {
       }
 
       await firestore().collection("Users").add({
-        ...user,
+        name: user.name ,
+        password: user.password,
         createdAt: new Date(),
       });
 
-      navigation.navigate("Lgoin");
+      navigation.navigate("Login");
       
       setUser({
         user_name: '',

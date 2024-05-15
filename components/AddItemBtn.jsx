@@ -9,6 +9,7 @@ import AddSpendModalDepenses from "./AddSpendModalDepenses";
 import AddSpendModalRevenu from "./AddSpendModalRevenu";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EventRegister } from 'react-native-event-listeners';
+import firestore from '@react-native-firebase/firestore'; 
 
 
 
@@ -16,6 +17,8 @@ const AddItemBtn = () => {
   const [openDepenseModal, setOpenDepenseModal]= useState(false);
   const [openRevenuModal, setOpenRevenuModal]= useState(false);
   const [userId, setUserId] = useState(null);
+  const [userName, setUserName] = useState('');
+
   
   const notificationIconName =  'account-multiple-outline';
 
@@ -35,6 +38,13 @@ const AddItemBtn = () => {
         const storedUserId = await AsyncStorage.getItem('userId');
         if (storedUserId !== null) {
           setUserId(storedUserId);
+          const userDoc = await firestore().collection('Users').doc(storedUserId).get();
+          if (userDoc.exists) {
+            const userData = userDoc.data();
+            setUserName(userData.user_name); // Assuming the user's name is stored in a field called 'user_name'
+          } else {
+            console.log('User document does not exist');
+          }
         }
       } catch (error) {
         console.error('Error retrieving user ID from local storage:', error);
@@ -70,7 +80,7 @@ const AddItemBtn = () => {
   
   return (
     <View style={styles.mainContainer}>
-      <Header title={""} MyIcon={notificationIconName} mySecondIcon="rotate-3d-variant" onIconPress={()=> {navigation.navigate("Login")}} onSecondIconPress={()=>{navigation.navigate("Échange")}} />
+      <Header title={userName} MyIcon={notificationIconName} mySecondIcon="rotate-3d-variant" onIconPress={()=> {navigation.navigate("Login")}} onSecondIconPress={()=>{navigation.navigate("Échange")}} />
       {renderButtons()}
       <AddSpendModalDepenses visible={openDepenseModal} onClose={() =>{setOpenDepenseModal(false)}} />
       <AddSpendModalRevenu visible={openRevenuModal} onClose={() =>{setOpenRevenuModal(false)}} />      

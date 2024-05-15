@@ -1,21 +1,49 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { EventRegister } from 'react-native-event-listeners';
 import LinearGradient from 'react-native-linear-gradient';
+import firestore from '@react-native-firebase/firestore'; // Import Firestore
 
 const LoginScreen = () => {
   const navigation = useNavigation();
 
-  const handleLogin = async (userId) => {
+  const [user, setUser] = useState({
+    name: "",
+    password: "",
+  });
+
+  const handleLogin = async () => {
     try {
-      await AsyncStorage.setItem('userId', userId);
-      console.log(userId);
-      EventRegister.emit('userIdChanged');
-      navigation.navigate('TabNavigator');
+      const { name, password } = user;
+      // Query Firestore to find a user with the provided username
+      const querySnapshot = await firestore()
+        .collection('Users')
+        .where('name', '==', name)
+        .limit(1)
+        .get();
+
+      if (!querySnapshot.empty) {
+        const userDoc = querySnapshot.docs[0];
+        const userData = userDoc.data();
+        // Compare the passwords
+        if (userData.password === password) {
+          // Passwords match, login successful
+          await AsyncStorage.setItem('userId', userDoc.id);
+          await AsyncStorage.setItem('userName', name);
+          EventRegister.emit('userIdChanged');
+          navigation.navigate('TabNavigator');
+        } else {
+          // Passwords don't match, show an alert
+          Alert.alert('Invalid credentials', 'Username or password is incorrect');
+        }
+      } else {
+        // No user found with the provided username
+        Alert.alert('User not found', 'No user found with the provided username');
+      }
     } catch (error) {
-      console.error('Error saving user ID to local storage:', error);
+      console.error('Error during login:', error);
     }
   };
 
@@ -28,16 +56,16 @@ const LoginScreen = () => {
       <View style={styles.formContainer}>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Nom Utilisateur</Text>
-          <TextInput style={styles.input} placeholderTextColor="gray" placeholder="Entrez Nom Utilisateur" />
+          <TextInput style={styles.input} placeholderTextColor="gray" placeholder="Entrez Nom Utilisateur" onChangeText={(text) => { setUser({ ...user, name: text }) }} />
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Mot de Passe</Text>
-          <TextInput style={styles.input} placeholderTextColor="gray" placeholder="Entrez Mot de Passe" secureTextEntry={true} />
+          <TextInput style={styles.input} placeholderTextColor="gray" placeholder="Entrez Mot de Passe" secureTextEntry={true} onChangeText={(text) => { setUser({ ...user, password: text }) }} />
         </View>
-        <TouchableOpacity style={styles.button} onPress={() => handleLogin('user_id')}>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Se connecter</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.signUpButton} onPress={()=>navigation.navigate("SignUp")}>
+        <TouchableOpacity style={styles.signUpButton} onPress={() => navigation.navigate("SignUp")}>
           <Text style={styles.signUpText}>S'inscrire</Text>
         </TouchableOpacity>
       </View>
@@ -67,7 +95,7 @@ const styles = StyleSheet.create({
     fontFamily: 'serif',
     fontWeight: '100',
   },
-  formContainer:{
+  formContainer: {
     height: '50%',
     width: '100%',
     padding: 20,
@@ -77,13 +105,13 @@ const styles = StyleSheet.create({
   },
   label: {
     color: 'white',
-    marginLeft:8,
+    marginLeft: 8,
     marginBottom: 5,
   },
   input: {
     backgroundColor: 'white',
-    color:"black",
-    borderRadius:10,
+    color: "black",
+    borderRadius: 10,
     padding: 10,
   },
   button: {
@@ -91,7 +119,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 15,
     alignItems: 'center',
-    elevation:4,
+    elevation: 4,
   },
   buttonText: {
     color: 'white',
@@ -101,14 +129,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignItems: 'center',
     borderRadius: 5,
-    borderColor:"white",
-    borderWidth:1,
-    elevation:10,
+    borderColor: "white",
+    borderWidth: 1,
+    elevation: 10,
     padding: 15,
-    backgroundColor:"#c70039"
+    backgroundColor: "#c70039"
   },
-  signUpText:{
-    color:"white"
+  signUpText: {
+    color: "white"
   }
 });
 
