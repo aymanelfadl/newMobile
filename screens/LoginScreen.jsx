@@ -35,10 +35,10 @@ const LoginScreen = () => {
           <TextInput style={styles.input} placeholderTextColor="gray" placeholder="Entrez Mot de Passe" secureTextEntry={true} />
         </View>
         <TouchableOpacity style={styles.button} onPress={() => handleLogin('user_id')}>
-          <Text style={styles.buttonText}>Sign In</Text>
+          <Text style={styles.buttonText}>Se connecter</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.signUpButton} onPress={()=>navigation.navigate("SignUp")}>
-          <Text style={styles.signUpText}>Sign Up</Text>
+          <Text style={styles.signUpText}>S'inscrire</Text>
         </TouchableOpacity>
       </View>
     </LinearGradient>

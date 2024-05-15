@@ -33,7 +33,7 @@ const SignUpScreen = () => {
                 <TextInput style={styles.input} placeholderTextColor="gray" placeholder="Confirmez Votre Mot de Passe" secureTextEntry={true} />
             </View>
                 <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Sign Up</Text>
+                <Text style={styles.buttonText}>S'inscrire</Text>
             </TouchableOpacity>
         </View>
       </View>
