@@ -32,7 +32,8 @@ const SignUpScreen = () => {
         createdAt: new Date(),
       });
 
-      navigation.navigate("Lgoin")
+      navigation.navigate("Lgoin");
+      
       setUser({
         user_name: '',
         password: '',
