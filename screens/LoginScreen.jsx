@@ -5,7 +5,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { EventRegister } from 'react-native-event-listeners';
 import LinearGradient from 'react-native-linear-gradient';
 import firestore from '@react-native-firebase/firestore'; 
-import { err } from 'react-native-svg';
 
 const LoginScreen = () => {
 
