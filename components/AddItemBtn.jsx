@@ -9,7 +9,6 @@ import AddSpendModalDepenses from "./AddSpendModalDepenses";
 import AddSpendModalRevenu from "./AddSpendModalRevenu";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EventRegister } from 'react-native-event-listeners';
-import firestore from '@react-native-firebase/firestore'; 
 
 
 
@@ -18,9 +17,8 @@ const AddItemBtn = () => {
   const [openRevenuModal, setOpenRevenuModal]= useState(false);
   const [userId, setUserId] = useState(null);
   const [userName, setUserName] = useState('');
-
   
-  const notificationIconName =  'account-multiple-outline';
+  const LogOutIconName =  'location-exit';
 
   const navigation = useNavigation(); 
 
@@ -36,15 +34,12 @@ const AddItemBtn = () => {
     const getUserId = async () => {
       try {
         const storedUserId = await AsyncStorage.getItem('userId');
-        if (storedUserId !== null) {
+        const storedUserName = await AsyncStorage.getItem('userName')
+        if (storedUserId !== null && storedUserName !== null) {
           setUserId(storedUserId);
-          const userDoc = await firestore().collection('Users').doc(storedUserId).get();
-          if (userDoc.exists) {
-            const userData = userDoc.data();
-            setUserName(userData.user_name); // Assuming the user's name is stored in a field called 'user_name'
-          } else {
-            console.log('User document does not exist');
-          }
+          setUserName(storedUserName);
+          console.log(storedUserId);
+          console.log(storedUserName);
         }
       } catch (error) {
         console.error('Error retrieving user ID from local storage:', error);
@@ -58,6 +53,21 @@ const AddItemBtn = () => {
       EventRegister.removeEventListener(listener);
     };
   }, []); 
+
+  const handleLogOut = async () => {
+    try {
+      await AsyncStorage.removeItem('userId');
+      await AsyncStorage.removeItem('userName');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  }
+  
+
   const renderButtons = () => {
     return DataBtns.map((btnData, index) => (
       <View key={index}>
@@ -80,7 +90,7 @@ const AddItemBtn = () => {
   
   return (
     <View style={styles.mainContainer}>
-      <Header title={userName} MyIcon={notificationIconName} mySecondIcon="rotate-3d-variant" onIconPress={()=> {navigation.navigate("Login")}} onSecondIconPress={()=>{navigation.navigate("Échange")}} />
+      <Header title={"Bienvenue " + userName} MyIcon={LogOutIconName} mySecondIcon="rotate-3d-variant" onIconPress={handleLogOut} onSecondIconPress={()=>{navigation.navigate("Échange")}} />
       {renderButtons()}
       <AddSpendModalDepenses visible={openDepenseModal} onClose={() =>{setOpenDepenseModal(false)}} />
       <AddSpendModalRevenu visible={openRevenuModal} onClose={() =>{setOpenRevenuModal(false)}} />      
@@ -146,7 +156,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    color:"rgb(229 231 235)"
+    color:"white"
   },
 });
 

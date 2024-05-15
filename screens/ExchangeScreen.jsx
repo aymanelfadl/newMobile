@@ -23,13 +23,19 @@ const ExchangeScreen = () => {
     const [showStartDate, setShowStartDate] = useState(false);
     const [typeExchange, setTypeExchange] = useState("");
     const [userId, setUserId] = useState(null);
+    const [userName, setUserName] = useState('');
+    const [inputName , setInputName] = useState('');
 
 
     const getUserId = async () => {
         try {
             const storedUserId = await AsyncStorage.getItem('userId');
-            if (storedUserId !== null) {
+            const storedUserName = await AsyncStorage.getItem('userName')
+            if (storedUserId !== null && storedUserName !== null) {
                 setUserId(storedUserId);
+                setUserName(storedUserName);
+                console.log(storedUserId);
+                console.log(storedUserName);
             }
         } catch (error) {
             console.error('Error retrieving user ID from local storage:', error);
@@ -76,7 +82,7 @@ const ExchangeScreen = () => {
 
     const handleAdd = async () => {
         const newItem = {
-            name:  userId === '1' ? 'Abdellatif' : 'Abdelaziz',
+            name:  inputName,
             spend: spend,
             type: typeExchange,
             date: selectedDate,
@@ -85,6 +91,7 @@ const ExchangeScreen = () => {
             await firestore().collection(`Users/${userId}/ExchangeCollection`).add(newItem);
             setSpend('');
             setTypeExchange("");
+            setInputName("");
         } catch (error) {
             console.error("Error adding document: ", error);
         }
@@ -142,28 +149,42 @@ const ExchangeScreen = () => {
     return (
         <View style={styles.mainContainer}>
             <View style={styles.firstContainer}>
-                <TouchableOpacity style={{borderWidth:1,borderRadius:100,borderColor:"crimson" , padding:4 ,marginRight:10, backgroundColor:typeExchange === "taking" ? "green" : "white"}} onPress={()=>setTypeExchange("taking")}>
-                    <Icon name="plus"  size={24} color={typeExchange === "taking" ? "white" : "black"} />
-                </TouchableOpacity>
-                <TouchableOpacity style={{borderWidth:1,borderRadius:100,borderColor:"crimson" ,marginRight:10,padding:4 ,backgroundColor:typeExchange === "giving" ? "red" : "white"}} onPress={()=>setTypeExchange("giving")}>
-                    <Icon name="minus"  size={24} color={typeExchange === "giving" ? "white" : "black"} />
-                </TouchableOpacity>
-                <TextInput
-                    onChangeText={(data) => setSpend(data)}
-                    value={spend}
-                    placeholder="Prix"
-                    placeholderTextColor="black"
-                    style={styles.input}
-                    keyboardType="numeric"
-                />
-                <TouchableOpacity onPress={showModeStartDate} style={{paddingHorizontal:6, marginRight:8,}}>
+                <TouchableOpacity onPress={showModeStartDate} style={{paddingHorizontal: 6}}>
                     <Icon name="calendar" size={30} color="crimson"/>
                 </TouchableOpacity>
+                <TouchableOpacity 
+                    style={[styles.exchangeTypeButton, {backgroundColor: typeExchange === "taking" ? "green" : "white"}]} 
+                    onPress={() => setTypeExchange("taking")}
+                >
+                    <Icon name="plus"  size={24} color={typeExchange === "taking" ? "white" : "black"} />
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    style={[styles.exchangeTypeButton, {backgroundColor: typeExchange === "giving" ? "red" : "white"}]} 
+                    onPress={() => setTypeExchange("giving")}
+                >
+                    <Icon name="minus"  size={24} color={typeExchange === "giving" ? "white" : "black"} />
+                </TouchableOpacity>
+                <View style={{paddingLeft:14,flexDirection:"row"}}>
+                    <TextInput
+                        onChangeText={(data) => setInputName(data)}
+                        value={inputName}
+                        placeholder="Nom"
+                        placeholderTextColor="black"
+                        style={styles.input}
+                    />
+                    <TextInput
+                        onChangeText={(data) => setSpend(data)}
+                        value={spend}
+                        placeholder="Prix"
+                        placeholderTextColor="black"
+                        style={styles.input}
+                        keyboardType="numeric"
+                    />
+                </View>
                 <TouchableOpacity onPress={handleAdd} style={styles.addButton}>
                     <Text style={styles.addButtonText}>Ajouter</Text>
                 </TouchableOpacity>
-                
-                {showStartDate && <DateTimePicker testID='dateTimePicker' value={new Date()} onChange={onChangeStartDate} />}
+                {showStartDate && <DateTimePicker testID='dateTimePicker' value={selectedDate} mode='date' display='default' onChange={onChangeStartDate} />}
             </View>
             <View style={{ backgroundColor: "crimson", height: 1, width: "100%" }}></View>
             <ScrollView style={styles.scrollView}>
@@ -213,25 +234,26 @@ const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
         backgroundColor: 'rgb(249, 250, 251)',
-        padding: 20,
     },
     firstContainer: {
+
+        height:"40vh",
+        paddingHorizontal:8,
         flexDirection: "row",
-        justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 20,
         borderWidth: 0.5,
-        padding: 18,
         borderRadius: 30,
+        margin:8,
         borderColor: "crimson",
         paddingBottom: 20, 
+        justifyContent:"space-between"
     },
     input: {
-        flex: 1,
+        marginVertical:10,
         borderWidth: 1,
         borderColor: 'crimson',
         backgroundColor: "#FFF",
-        height: 50,
         borderRadius: 15,
         paddingHorizontal: 10,
         marginRight: 10,
@@ -317,6 +339,12 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         flex: 1, 
+    },
+    exchangeTypeButton: {
+        borderWidth: 1,
+        borderRadius: 100,
+        borderColor: "crimson",
+        padding: 4,
     },
 });
 

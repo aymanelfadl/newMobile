@@ -4,20 +4,23 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { EventRegister } from 'react-native-event-listeners';
 import LinearGradient from 'react-native-linear-gradient';
-import firestore from '@react-native-firebase/firestore'; // Import Firestore
+import firestore from '@react-native-firebase/firestore'; 
+import { err } from 'react-native-svg';
 
 const LoginScreen = () => {
+
   const navigation = useNavigation();
 
   const [user, setUser] = useState({
     name: "",
     password: "",
   });
+  const [errs , setErrs] = useState('');
 
   const handleLogin = async () => {
     try {
       const { name, password } = user;
-      // Query Firestore to find a user with the provided username
+
       const querySnapshot = await firestore()
         .collection('Users')
         .where('name', '==', name)
@@ -27,20 +30,16 @@ const LoginScreen = () => {
       if (!querySnapshot.empty) {
         const userDoc = querySnapshot.docs[0];
         const userData = userDoc.data();
-        // Compare the passwords
         if (userData.password === password) {
-          // Passwords match, login successful
           await AsyncStorage.setItem('userId', userDoc.id);
           await AsyncStorage.setItem('userName', name);
           EventRegister.emit('userIdChanged');
           navigation.navigate('TabNavigator');
         } else {
-          // Passwords don't match, show an alert
-          Alert.alert('Invalid credentials', 'Username or password is incorrect');
+          setErrs('Username or password is incorrect');
         }
       } else {
-        // No user found with the provided username
-        Alert.alert('User not found', 'No user found with the provided username');
+        setErrs('No user found with the provided username');
       }
     } catch (error) {
       console.error('Error during login:', error);
@@ -62,6 +61,7 @@ const LoginScreen = () => {
           <Text style={styles.label}>Mot de Passe</Text>
           <TextInput style={styles.input} placeholderTextColor="gray" placeholder="Entrez Mot de Passe" secureTextEntry={true} onChangeText={(text) => { setUser({ ...user, password: text }) }} />
         </View>
+        {errs ? <Text style={styles.errorMessage}>{errs}</Text> : null}
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Se connecter</Text>
         </TouchableOpacity>
@@ -137,7 +137,12 @@ const styles = StyleSheet.create({
   },
   signUpText: {
     color: "white"
-  }
+  },
+  errorMessage: {
+    color: '#272530',
+    borderRadius:10,
+    marginVertical: 10,
+  },
 });
 
 export default LoginScreen;
