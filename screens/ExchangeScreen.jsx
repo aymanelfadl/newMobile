@@ -19,7 +19,7 @@ const ExchangeScreen = () => {
     const [items, setItems] = useState([]);
     const [deleteIndex, setDeleteIndex] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
-    const [selectedDate, setSelectedDate] = useState(formatDate(new Date()));
+    const [selectedDate, setSelectedDate] = useState(new Date());
     const [showStartDate, setShowStartDate] = useState(false);
     const [typeExchange, setTypeExchange] = useState("");
     const [userId, setUserId] = useState(null);
@@ -69,10 +69,13 @@ const ExchangeScreen = () => {
     }, [userId]);
 
     const onChangeStartDate = (event, selectedDate) => {
-        setSelectedDate(formatDate(selectedDate));
-        console.log(selectedDate);
+        if (selectedDate !== undefined) {
+            setSelectedDate(selectedDate);
+            console.log(selectedDate);
+        }
         setShowStartDate(false);
-      };
+    };
+    
     
       const showModeStartDate = () => {
         setShowStartDate(true); 
@@ -85,7 +88,7 @@ const ExchangeScreen = () => {
             name:  inputName,
             spend: spend,
             type: typeExchange,
-            date: selectedDate,
+            date: formatDate(selectedDate),
         };
         try {
             await firestore().collection(`Users/${userId}/ExchangeCollection`).add(newItem);
@@ -131,7 +134,7 @@ const ExchangeScreen = () => {
                     <View style={styles.itemTextContainer}>
                     {item.type === "taking" ? 
                         <Text style={{color:"white"}}>
-                            j'ai pris {item.spend} MAD à {item.name} le {item.date}.
+                            j'ai pris {item.spend} MAD à {item.name} le {item.date}
                         </Text>
                      : 
                         <Text style={{color:"white"}}>
