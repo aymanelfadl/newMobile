@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "281673701772",
-    "project_id": "expense-manager-376bc",
-    "storage_bucket": "expense-manager-376bc.appspot.com"
+    "project_number": "362245894594",
+    "project_id": "expenses-manager-65f07",
+    "storage_bucket": "expenses-manager-65f07.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:281673701772:android:ed908eb5788c6409c2dea9",
+        "mobilesdk_app_id": "1:362245894594:android:8ddb2c0dc7ebf67e56a65b",
         "android_client_info": {
           "package_name": "com.newproject"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDczSU5xKWp8VDajyY26tFN2FwrbAPrHyE"
+          "current_key": "AIzaSyCWrpnUClm_RmLRdB-mIJBtGth3buWqVpM"
         }
       ],
       "services": {

@@ -203,7 +203,7 @@ const AddSpendModalRevenu = ({ visible, onClose }) => {
       let imageUrl;
 
       if (!thumbnail) {
-        imageUrl = "https://firebasestorage.googleapis.com/v0/b/expense-manager-376bc.appspot.com/o/cost.png?alt=media&token=2d9db609-59ce-4237-8e94-633bae1e33aa";
+        imageUrl ='https://firebasestorage.googleapis.com/v0/b/expenses-manager-65f07.appspot.com/o/cost.png?alt=media&token=5095491e-f707-49b7-a76d-81cedec21398';
     } else {
         const imageName = 'revenu_' + Date.now();
         const reference = storage().ref(imageName);

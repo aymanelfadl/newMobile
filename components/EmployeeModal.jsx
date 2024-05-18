@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import { useState,useEffect } from 'react';
 import { View, Modal, StyleSheet, Text, TextInput, TouchableOpacity, } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -37,7 +37,7 @@ const EmployeeModal = ({ visible, onClose }) => {
     try {
         const currentDate = new Date();
         const formattedDate = formatDate(currentDate);
-        const img = 'https://firebasestorage.googleapis.com/v0/b/expense-manager-376bc.appspot.com/o/employes.png?alt=media&token=c33d6436-242a-480e-bb58-d52ebeaa642a'
+        const img = 'https://firebasestorage.googleapis.com/v0/b/expenses-manager-65f07.appspot.com/o/employes.png?alt=media&token=9f1cb180-940f-49e9-9f92-82845d58a0af'
         
         const employeeRef = await firestore().collection(`Users/${userId}/EmployesCollection`).add({
           thumbnail: img, 

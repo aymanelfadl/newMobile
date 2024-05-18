@@ -201,7 +201,7 @@ const showModeDate = () => {
       let imageUrl;
 
       if (!thumbnail) {
-        imageUrl = 'https://firebasestorage.googleapis.com/v0/b/expense-manager-376bc.appspot.com/o/depenser-de.png?alt=media&token=85cab1ea-5c3f-4f15-a4ac-a60de4fec212';
+        imageUrl = 'https://firebasestorage.googleapis.com/v0/b/expenses-manager-65f07.appspot.com/o/depenser-de.png?alt=media&token=f6fb0357-5e9c-471e-b1fe-80e6163fa817';
       } else {
         const imageName = 'depense_' + Date.now();
         const reference = storage().ref(imageName);
