@@ -151,7 +151,7 @@ const getTotalExchange = () => {
     .onSnapshot(snapshot => {
       let totalExchange = 0;
       snapshot.forEach(exchange => {
-        const exchangeDate = new Date(exchange.data().date.seconds * 1000)
+        const exchangeDate = new Date(exchange.data().date)
         if(dateStartObj.toISOString().split("T")[0] <= exchangeDate.toISOString().split("T")[0] &&  exchangeDate.toISOString().split("T")[0]  <= dateEndObj.toISOString().split("T")[0]){
             if(exchange.data().type === 'taking'){
               totalExchange += Number(exchange.data().spend);

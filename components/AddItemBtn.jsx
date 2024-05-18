@@ -16,8 +16,9 @@ const AddItemBtn = () => {
   const [openDepenseModal, setOpenDepenseModal]= useState(false);
   const [openRevenuModal, setOpenRevenuModal]= useState(false);
   const [userId, setUserId] = useState(null);
+  const [userName, setUserName] = useState('');
   
-  const notificationIconName =  'account-multiple-outline';
+  const LogOutIconName =  'location-exit';
 
   const navigation = useNavigation(); 
 
@@ -33,8 +34,12 @@ const AddItemBtn = () => {
     const getUserId = async () => {
       try {
         const storedUserId = await AsyncStorage.getItem('userId');
-        if (storedUserId !== null) {
+        const storedUserName = await AsyncStorage.getItem('userName')
+        if (storedUserId !== null && storedUserName !== null) {
           setUserId(storedUserId);
+          setUserName(storedUserName);
+          console.log(storedUserId);
+          console.log(storedUserName);
         }
       } catch (error) {
         console.error('Error retrieving user ID from local storage:', error);
@@ -48,6 +53,21 @@ const AddItemBtn = () => {
       EventRegister.removeEventListener(listener);
     };
   }, []); 
+
+  const handleLogOut = async () => {
+    try {
+      await AsyncStorage.removeItem('userId');
+      await AsyncStorage.removeItem('userName');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  }
+  
+
   const renderButtons = () => {
     return DataBtns.map((btnData, index) => (
       <View key={index}>
@@ -70,7 +90,7 @@ const AddItemBtn = () => {
   
   return (
     <View style={styles.mainContainer}>
-      <Header title={userId === '1' ? "Bienvenue Abdelaziz" : "Bienvenue Abdellatif"} MyIcon={notificationIconName} mySecondIcon="rotate-3d-variant" onIconPress={()=> {navigation.navigate("Login")}} onSecondIconPress={()=>{navigation.navigate("Échange")}} />
+      <Header title={"Bienvenue " + userName} MyIcon={LogOutIconName} mySecondIcon="rotate-3d-variant" onIconPress={handleLogOut} onSecondIconPress={()=>{navigation.navigate("Échange")}} />
       {renderButtons()}
       <AddSpendModalDepenses visible={openDepenseModal} onClose={() =>{setOpenDepenseModal(false)}} />
       <AddSpendModalRevenu visible={openRevenuModal} onClose={() =>{setOpenRevenuModal(false)}} />      
@@ -136,7 +156,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    color:"rgb(229 231 235)"
+    color:"white"
   },
 });
 

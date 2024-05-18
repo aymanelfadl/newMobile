@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import LinearGradient from 'react-native-linear-gradient';
+
 
 const SplashScreen = ({ navigation }) => {
   useEffect(() => {
@@ -22,9 +24,9 @@ const SplashScreen = ({ navigation }) => {
   }, [navigation]);
 
   return (
-    <View style={styles.container}>
-      <Image source={require('../assets/logologo.png')} style={styles.logo} />
-    </View>
+    <LinearGradient colors={['#900c3f', '#c70039']} style={styles.container}>
+        <Image source={require('../assets/logologo.png')} style={styles.logo} />
+    </LinearGradient>
   );
 };
 
@@ -33,7 +35,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'crimson',
   },
   logo: {
     width: 300,

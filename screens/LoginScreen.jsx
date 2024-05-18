@@ -1,47 +1,147 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { useState } from 'react';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { EventRegister } from 'react-native-event-listeners';
+import LinearGradient from 'react-native-linear-gradient';
+import firestore from '@react-native-firebase/firestore'; 
 
 const LoginScreen = () => {
+
   const navigation = useNavigation();
 
-  const handleLogin = async (userId) => {
+  const [user, setUser] = useState({
+    name: "",
+    password: "",
+  });
+  const [errs , setErrs] = useState('');
+
+  const handleLogin = async () => {
     try {
-      await AsyncStorage.setItem('userId', userId);
-      console.log(userId);
-      EventRegister.emit('userIdChanged');
-      navigation.navigate('TabNavigator');
+      const { name, password } = user;
+
+      const querySnapshot = await firestore()
+        .collection('Users')
+        .where('name', '==', name)
+        .limit(1)
+        .get();
+
+      if (!querySnapshot.empty) {
+        const userDoc = querySnapshot.docs[0];
+        const userData = userDoc.data();
+        if (userData.password === password) {
+          await AsyncStorage.setItem('userId', userDoc.id);
+          await AsyncStorage.setItem('userName', name);
+          EventRegister.emit('userIdChanged');
+          navigation.navigate('TabNavigator');
+        } else {
+          setErrs('Username or password is incorrect');
+        }
+      } else {
+        setErrs('No user found with the provided username');
+      }
     } catch (error) {
-      console.error('Error saving user ID to local storage:', error);
+      console.error('Error during login:', error);
     }
   };
 
   return (
-    <View style={{ flex: 1,alignItems: 'center', backgroundColor: "crimson" }}>
-      <View style={{flexDirection:"row",marginTop:"10%",marginBottom:"10%" }}>
-        <View style={{borderWidth:2, borderColor: "rgb(238 242 255)",width:"50%",height:"1%",alignSelf:"center", marginRight:"10%" }}></View>
-        <Text style={{fontSize:28,color:"rgb(238 242 255)"}}>
-          Passer à
-        </Text>
-        <View style={{borderWidth:2, borderColor: "rgb(238 242 255)",width:"50%",height:"1%",alignSelf:"center" ,marginLeft:"10%"}}></View>
-
+    <LinearGradient colors={['#900c3f', '#c70039']} style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Extra Cach</Text>
+        <Text style={styles.subHeaderText}>Connectez-vous pour continuer</Text>
       </View>
-
-      <TouchableOpacity
-        style={{ backgroundColor: 'rgb(23 37 84)', alignItems: "center", paddingVertical: 18, marginVertical: 25, borderRadius: 100, width: "50%" }}
-        onPress={() => handleLogin('1')}
-      >
-        <Text style={{ color: 'white', fontWeight:"bold" }}>Abdelaziz Dahraoui</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={{ backgroundColor: 'rgb(23 37 84)', alignItems: "center", paddingVertical: 18, marginVertical: 25, borderRadius: 100, width: "50%", }}
-        onPress={() => handleLogin('2')}
-      >
-        <Text style={{ color: 'white', fontWeight:"bold" }}>Abdellatif Omry</Text>
-      </TouchableOpacity>
-    </View>
+      <View style={styles.formContainer}>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Nom Utilisateur</Text>
+          <TextInput style={styles.input} placeholderTextColor="gray" placeholder="Entrez Nom Utilisateur" onChangeText={(text) => { setUser({ ...user, name: text }) }} />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Mot de Passe</Text>
+          <TextInput style={styles.input} placeholderTextColor="gray" placeholder="Entrez Mot de Passe" secureTextEntry={true} onChangeText={(text) => { setUser({ ...user, password: text }) }} />
+        </View>
+        {errs ? <Text style={styles.errorMessage}>{errs}</Text> : null}
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Se connecter</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.signUpButton} onPress={() => navigation.navigate("SignUp")}>
+          <Text style={styles.signUpText}>S'inscrire</Text>
+        </TouchableOpacity>
+      </View>
+    </LinearGradient>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  header: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '20%',
+  },
+  headerText: {
+    fontSize: 50,
+    color: 'white',
+    fontFamily: 'serif',
+    fontWeight: '800',
+  },
+  subHeaderText: {
+    color: 'white',
+    fontFamily: 'serif',
+    fontWeight: '100',
+  },
+  formContainer: {
+    height: '50%',
+    width: '100%',
+    padding: 20,
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
+  label: {
+    color: 'white',
+    marginLeft: 8,
+    marginBottom: 5,
+  },
+  input: {
+    backgroundColor: 'white',
+    color: "black",
+    borderRadius: 10,
+    padding: 10,
+  },
+  button: {
+    backgroundColor: 'crimson',
+    borderRadius: 5,
+    padding: 15,
+    alignItems: 'center',
+    elevation: 4,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  signUpButton: {
+    marginTop: 10,
+    alignItems: 'center',
+    borderRadius: 5,
+    borderColor: "white",
+    borderWidth: 1,
+    elevation: 10,
+    padding: 15,
+    backgroundColor: "#c70039"
+  },
+  signUpText: {
+    color: "white"
+  },
+  errorMessage: {
+    color: '#272530',
+    borderRadius:10,
+    marginVertical: 10,
+  },
+});
 
 export default LoginScreen;
